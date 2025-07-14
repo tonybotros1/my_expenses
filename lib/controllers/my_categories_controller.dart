@@ -4,36 +4,54 @@ import 'package:hive/hive.dart';
 
 import '../models/category_model.dart';
 
-class AddNewItemController extends GetxController {
-  TextEditingController amountController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
-  String? selectedCategory;
+class MyCategoriesController extends GetxController {
+  TextEditingController category = TextEditingController();
+
   late Box<CategoryModel> _box;
   var categories = <CategoryModel>[].obs;
-
-  // List categories = [
-  //   'Food',
-  //   'Transportations',
-  //   'Clothes',
-  //   'Bills',
-  //   'Entertainment',
-  //   'Devices',
-  // ];
-
+  RxBool isScreenLoading = RxBool(false);
   @override
   void onInit() async {
     super.onInit();
 
-    _box = Hive.box<CategoryModel>('category_box');
+    _box = Hive.isBoxOpen('category_box')
+        ? Hive.box<CategoryModel>('category_box')
+        : await Hive.openBox<CategoryModel>('category_box');
+
     loadCategories();
     _box.watch().listen((_) => loadCategories());
   }
 
   void loadCategories() {
+    isScreenLoading.value = true;
     categories.value = _box.values.toList();
+    isScreenLoading.value = false;
+  }
+
+  void deleteCategoryById(String id) {
+    final category = _box.get(id);
+    if (category == null) {
+      Get.snackbar(
+        'Error',
+        'Category not found!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.blueGrey,
+        colorText: Colors.white,
+      );
+
+      return;
+    }
+
+    _box.delete(id);
+    Get.back();
+
+    Get.snackbar(
+      'Deleted',
+      'Category "${category.name}" has been deleted',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+    );
   }
 
   void addCategoryByName(String name) {

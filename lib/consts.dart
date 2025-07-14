@@ -3,8 +3,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 Color mainColor = Color(0xff3D1E4F);
-var textFontForAppBar = GoogleFonts.pacifico(fontSize: 50);
+var textFontForAppBar = GoogleFonts.raleway(fontSize: 25,fontWeight: FontWeight.bold);
+double textFieldHeight = 35;
+TextStyle textFieldFontStyle = const TextStyle(
+  fontSize: 14,
+  color: Colors.black,
+);
+TextStyle textFieldLabelStyle = TextStyle(
+  color: Colors.grey.shade700,
+  fontSize: 12,
+  fontWeight: FontWeight.bold,
+);
 
+var textStyleForCards = const TextStyle(
+  fontSize: 22,
+  fontWeight: FontWeight.bold,
+  color: Color(0xffE9F5BE),
+);
 Widget customText({
   required String text,
   double? maxWidth = 150,
