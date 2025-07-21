@@ -16,20 +16,32 @@ class AddNewItemController extends GetxController {
   late Box<CategoryModel> _box;
   late Box<ItemModel> _itemsBox;
   var categories = <CategoryModel>[].obs;
-  DateFormat formatter = DateFormat('dd/MM/yyyy');
+  DateFormat formatter = DateFormat('dd-MM-yyyy');
 
   @override
   void onInit() async {
     super.onInit();
-
+    // category box
+    await Hive.openBox<CategoryModel>('category_box');
     _box = Hive.box<CategoryModel>('category_box');
 
-    // Hive.registerAdapter(ItemModelAdapter());
+    // item box
     await Hive.openBox<ItemModel>('item_box');
-
     _itemsBox = Hive.box<ItemModel>('item_box');
+
     loadCategories();
     _box.watch().listen((_) => loadCategories());
+  }
+
+  @override
+  void onClose() {
+    if (Hive.isBoxOpen('category_box')) {
+      Hive.box<CategoryModel>('category_box').close();
+    }
+    if (Hive.isBoxOpen('item_box')) {
+      Hive.box<ItemModel>('item_box').close();
+    }
+    super.onClose();
   }
 
   void loadCategories() {
@@ -58,21 +70,63 @@ class AddNewItemController extends GetxController {
   }
 
   // this functios is to add new item
-  addNewItem() {
+  void addNewItem() async {
     try {
+      // Validate required fields
+      if (itemNameController.text.isEmpty ||
+          dateController.text.isEmpty ||
+          selectedCategory == null) {
+        showSnackBar(
+          title: 'Error',
+          message: 'Please fill all required fields.',
+        );
+        return;
+      }
+
+      // Parse the date
+      DateTime parsedDate;
+      try {
+        parsedDate = formatter.parse(dateController.text);
+      } catch (e) {
+        showSnackBar(title: 'Error', message: 'Invalid date format.');
+        return;
+      }
+
+      // Create new item
       final newItem = ItemModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: itemNameController.text,
-        category: '$selectedCategory',
-        date: formatter.parse(dateController.text),
-        note: noteController.text,
-        price: double.tryParse(priceController.text) ?? 0.0,
+        name: itemNameController.text.trim(),
+        category:
+            selectedCategory!, // assuming it's a String or use selectedCategory.name
+        date: parsedDate,
+        note: noteController.text.trim(),
+        price: double.tryParse(priceController.text.trim()) ?? 0.0,
       );
 
-      _itemsBox.put(newItem.id, newItem);
-      showSnackBar(title: 'Done', message: 'Item Added Successfully');
+      // Add to Hive box
+      await _itemsBox.put(newItem.id, newItem);
+
+      // Success feedback
+      showSnackBar(title: 'Done', message: 'Item added successfully');
     } catch (e) {
-      //
+      print('Add item error: $e');
+      showSnackBar(title: 'Error', message: 'Failed to add item.');
+    }
+  }
+
+  Future<void> selectDateContext(
+    BuildContext context,
+    TextEditingController date,
+  ) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      date.text = textToDate(picked.toString());
     }
   }
 }

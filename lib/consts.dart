@@ -87,3 +87,43 @@ SnackbarController showSnackBar({
     animationDuration: const Duration(milliseconds: 500),
   );
 }
+
+String textToDate(dynamic inputDate) {
+  // 1) Null or empty
+  if (inputDate == null) return '';
+
+
+  // 3) Dart DateTime
+  if (inputDate is DateTime) {
+    return DateFormat('dd-MM-yyyy').format(inputDate);
+  }
+
+  // 4) String
+  if (inputDate is String) {
+    final raw = inputDate.trim();
+    if (raw.isEmpty) return '';
+
+    // Already in dd-MM-yyyy?
+    final ddMMyyyy = RegExp(r'^\d{2}-\d{2}-\d{4}$');
+    if (ddMMyyyy.hasMatch(raw)) {
+      return raw;
+    }
+
+    // Try parsing (e.g. "yyyy-MM-dd", ISO, etc.)
+    try {
+      final parsed = DateTime.parse(raw);
+      return DateFormat('dd-MM-yyyy').format(parsed);
+    } catch (_) {
+      // Fallback: try strict yyyy-MM-dd
+      try {
+        final parsedStrict = DateFormat('yyyy-MM-dd').parseStrict(raw);
+        return DateFormat('dd-MM-yyyy').format(parsedStrict);
+      } catch (e) {
+        return '';
+      }
+    }
+  }
+
+  // Unsupported type
+  return '';
+}

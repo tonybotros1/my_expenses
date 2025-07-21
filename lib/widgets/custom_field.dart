@@ -45,6 +45,7 @@ Widget customLabeledTextField({
         maxLines: maxLines,
         controller: controller,
         keyboardType: keyboardType,
+        
         decoration: InputDecoration(
           icon: icon,
           suffixIcon: suffixIcon,

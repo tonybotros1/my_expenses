@@ -77,6 +77,14 @@ class MyCategoriesController extends GetxController {
     _box.watch().listen((_) => loadCategories());
   }
 
+  @override
+  void onClose() {
+    if (Hive.isBoxOpen('category_box')) {
+      Hive.box<CategoryModel>('items').close();
+    }
+    super.onClose();
+  }
+
   void loadCategories() {
     isScreenLoading.value = true;
     categories.value = _box.values.toList();

@@ -19,7 +19,14 @@ class AddNewItem extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text('New Item', style: textFontForAppBar),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.done))],
+        actions: [
+          IconButton(
+            onPressed: () {
+              _addNewItemController.addNewItem();
+            },
+            icon: Icon(Icons.done),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -73,12 +80,23 @@ class AddNewItem extends StatelessWidget {
                   ],
                 ),
                 customLabeledTextField(
+                  isDouble: true,
                   label: "Price",
                   controller: _addNewItemController.priceController,
                   keyboardType: TextInputType.number,
                 ),
 
                 customLabeledTextField(
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      _addNewItemController.selectDateContext(
+                        context,
+                        _addNewItemController.dateController,
+                      );
+                    },
+                    icon: Icon(Icons.date_range_outlined),
+                  ),
+                  isDate: true,
                   label: "Date",
                   controller: _addNewItemController.dateController,
                   keyboardType: TextInputType.datetime,

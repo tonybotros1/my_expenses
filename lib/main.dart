@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'hive_setup/hive_initializer.dart';
 import 'screens/add_new_item.dart';
-import 'screens/main_screen.dart';
+import 'screens/init_screen.dart';
 import 'screens/my_categories.dart';
 
 void main() async {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       // home: MainScreen(),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => MainScreen()),
+        GetPage(name: '/', page: () => InitScreen()),
         GetPage(name: '/addNewItem', page: () => AddNewItem()),
         GetPage(name: '/myCategories', page: () => MyCategories()),
       ],
