@@ -46,9 +46,10 @@ class AddNewItem extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () {
-                          addCategory(
+                          addOrEditCategory(
+                            isEdit: false,
                             controller: controller.categoryController,
-                            onPressed: () {
+                            onPressed: () async {
                               controller.addCategoryByName(
                                 controller.categoryController.text,
                               );
@@ -86,9 +87,10 @@ class AddNewItem extends StatelessWidget {
   }
 }
 
-Future<dynamic> addCategory({
+Future<dynamic> addOrEditCategory({
   required TextEditingController controller,
   required void Function()? onPressed,
+  required bool isEdit,
 }) {
   return Get.dialog(
     Dialog(
@@ -104,7 +106,10 @@ Future<dynamic> addCategory({
               controller: controller,
               keyboardType: TextInputType.text,
             ),
-            ElevatedButton(onPressed: onPressed, child: Text('Add')),
+            ElevatedButton(
+              onPressed: onPressed,
+              child: Text(isEdit ? 'Save' : 'Add'),
+            ),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
+import '../consts.dart';
 import '../models/category_model.dart';
 
 class AddNewItemController extends GetxController {
@@ -14,14 +15,6 @@ class AddNewItemController extends GetxController {
   late Box<CategoryModel> _box;
   var categories = <CategoryModel>[].obs;
 
-  // List categories = [
-  //   'Food',
-  //   'Transportations',
-  //   'Clothes',
-  //   'Bills',
-  //   'Entertainment',
-  //   'Devices',
-  // ];
 
   @override
   void onInit() async {
@@ -36,27 +29,29 @@ class AddNewItemController extends GetxController {
     categories.value = _box.values.toList();
   }
 
+  // this function is to add new category
   void addCategoryByName(String name) {
     final exists = categories.any(
       (cat) => cat.name.toLowerCase() == name.toLowerCase(),
     );
 
     if (exists) {
-      Get.snackbar(
-        'Already Exists',
-        'Category "$name" Exists',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red[200],
-        colorText: Colors.white,
-      );
+      showSnackBar(title: 'Already Exists', message: 'Category "$name" Exists');
+
       return;
     }
-
+    Get.back();
     final newCategory = CategoryModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
     );
+    showSnackBar(title: 'Category Added', message: 'Category "$name"');
 
     _box.put(newCategory.id, newCategory);
+  }
+
+  // this functios is to add new item
+  addNewItem(){
+    
   }
 }
