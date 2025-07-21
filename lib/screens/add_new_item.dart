@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_expenses/models/category_model.dart';
 import '../consts.dart';
 import '../controllers/add_new_item_controller.dart';
 import '../widgets/custom_drop_menu.dart';
 import '../widgets/custom_field.dart';
 
 class AddNewItem extends StatelessWidget {
-  const AddNewItem({super.key});
+  AddNewItem({super.key});
+
+  final AddNewItemController _addNewItemController = Get.put(
+    AddNewItemController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -14,73 +19,79 @@ class AddNewItem extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text('New Item', style: textFontForAppBar),
+        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.done))],
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: GetX<AddNewItemController>(
-            init: AddNewItemController(),
-            builder: (controller) {
-              return Column(
-                spacing: 20,
-                children: [
-                  customLabeledTextField(
-                    label: "Item Name",
-                    controller: controller.amountController,
-                    keyboardType: TextInputType.text,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: customDropdown(
-                          label: "Category",
-                          value: controller.selectedCategory,
-                          items: controller.categories.isEmpty
-                              ? []
-                              : controller.categories
-                                    .map((value) => value.name)
-                                    .toList(),
-                          onChanged: (val) => controller.selectedCategory = val,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          addOrEditCategory(
-                            isEdit: false,
-                            controller: controller.categoryController,
-                            onPressed: () async {
-                              controller.addCategoryByName(
-                                controller.categoryController.text,
+          child: Obx(() {
+            return Column(
+              spacing: 20,
+              children: [
+                customLabeledTextField(
+                  label: "Item Name",
+                  controller: _addNewItemController.itemNameController,
+                  keyboardType: TextInputType.text,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: customDropdown(
+                        label: "Category",
+                        value: _addNewItemController.selectedCategory,
+                        items: _addNewItemController.categories.isEmpty
+                            ? []
+                            : _addNewItemController.categories
+                                  .map((value) => value.name)
+                                  .toList(),
+                        onChanged: (val) {
+                          final selected = _addNewItemController.categories
+                              .firstWhere(
+                                (cat) => cat.name == val,
+                                orElse: () => CategoryModel(id: '', name: ''),
                               );
-                            },
-                          );
-                        },
-                        icon: Icon(Icons.add),
-                      ),
-                    ],
-                  ),
-                  customLabeledTextField(
-                    label: "Price",
-                    controller: controller.priceController,
-                    keyboardType: TextInputType.number,
-                  ),
 
-                  customLabeledTextField(
-                    label: "Date",
-                    controller: controller.dateController,
-                    keyboardType: TextInputType.datetime,
-                  ),
-                  customLabeledTextField(
-                    label: "Note",
-                    maxLines: 10,
-                    controller: controller.noteController,
-                    keyboardType: TextInputType.datetime,
-                  ),
-                ],
-              );
-            },
-          ),
+                          _addNewItemController.selectedCategory = selected.id;
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        addOrEditCategory(
+                          isEdit: false,
+                          controller: _addNewItemController.categoryController,
+                          onPressed: () async {
+                            _addNewItemController.addCategoryByName(
+                              _addNewItemController.categoryController.text,
+                            );
+                          },
+                        );
+                      },
+                      icon: Icon(Icons.add),
+                    ),
+                  ],
+                ),
+                customLabeledTextField(
+                  label: "Price",
+                  controller: _addNewItemController.priceController,
+                  keyboardType: TextInputType.number,
+                ),
+
+                customLabeledTextField(
+                  label: "Date",
+                  controller: _addNewItemController.dateController,
+                  keyboardType: TextInputType.datetime,
+                ),
+                customLabeledTextField(
+                  label: "Note",
+                  maxLines: 10,
+                  controller: _addNewItemController.noteController,
+                  keyboardType: TextInputType.datetime,
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );
