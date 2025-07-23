@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_expenses/controllers/main_screen_controller.dart';
 import '../consts.dart';
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  MainScreen({super.key});
+
+  final MainScreenController _mainScreenController = Get.put(
+    MainScreenController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +78,6 @@ class MainScreen extends StatelessWidget {
         ),
       ),
 
-    
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {

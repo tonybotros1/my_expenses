@@ -31,7 +31,15 @@ class AllItems extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        // delete selected logic
+                        alertDialog(
+                          middleText:
+                              'Selected items will be deleted permanently',
+                          title: 'Delete Items',
+                          onPressed: () async {
+                            await _allItemsController.deleteItemById();
+                            _allItemsController.exitSelectionMode();
+                          },
+                        );
                       },
                     ),
 
@@ -40,7 +48,40 @@ class AllItems extends StatelessWidget {
                         : IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
-                              // edit logic
+                              Get.toNamed(
+                                '/addNewItem',
+                                arguments: ItemModel(
+                                  id: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .id,
+                                  name: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .name,
+                                  category: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .category,
+                                  date: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .date,
+                                  note: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .name,
+                                  price: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .price,
+                                  quantity: _allItemsController
+                                      .selectedItemsDetails
+                                      .first
+                                      .quantity,
+                                ),
+                              );
+                              _allItemsController.exitSelectionMode();
                             },
                           ),
                   ],
@@ -67,7 +108,7 @@ class AllItems extends StatelessWidget {
             ? Center(child: CircularProgressIndicator())
             : _allItemsController.allItems.isEmpty &&
                   _allItemsController.isScreenLoading.isFalse
-            ? Center(child: Text('No Date'))
+            ? Center(child: Text('No Items'))
             : ListView.builder(
                 itemCount: _allItemsController.allItems.length,
                 itemBuilder: (context, i) {
@@ -83,12 +124,12 @@ class AllItems extends StatelessWidget {
                         .contains(i);
                     return GestureDetector(
                       onLongPress: () {
-                        _allItemsController.enterSelectionMode(i,item.id);
+                        _allItemsController.enterSelectionMode(i, item);
                       },
                       onTap: _allItemsController.canSelectByOneClick.isFalse
                           ? null
                           : () {
-                              _allItemsController.enterSelectionMode(i,item.id);
+                              _allItemsController.enterSelectionMode(i, item);
                             },
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 8),
@@ -110,28 +151,41 @@ class AllItems extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             spacing: 30,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
+                                spacing: 20,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: bgColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: customText(
-                                      text:
-                                          '${_allItemsController.getCategoryByIdSync(item.category)}',
-                                      color: textColor,
-                                      fontSize: 14,
-                                      isBold: true,
-                                    ),
+                                  Row(
+                                    spacing: 15,
+                                    children: [
+                                      Icon(
+                                        Icons.restaurant,
+                                        size: 25,
+                                        color: Colors.grey,
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: bgColor,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: customText(
+                                          text:
+                                              '${_allItemsController.getCategoryByIdSync(item.category)?.name}',
+                                          color: textColor,
+                                          fontSize: 14,
+                                          isBold: true,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   Row(
                                     children: [
@@ -154,6 +208,7 @@ class AllItems extends StatelessWidget {
                                 ],
                               ),
                               Row(
+                                spacing: 20,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -163,6 +218,7 @@ class AllItems extends StatelessWidget {
                                       isBold: true,
                                       fontSize: 18,
                                       color: Colors.black,
+                                      maxLines: 3,
                                     ),
                                   ),
                                   customText(
@@ -173,6 +229,12 @@ class AllItems extends StatelessWidget {
                                     formatDouble: true,
                                   ),
                                 ],
+                              ),
+                              customText(
+                                text: item.note,
+                                fontSize: 14,
+                                color: Colors.grey.shade700,
+                                isBold: true,
                               ),
                             ],
                           ),

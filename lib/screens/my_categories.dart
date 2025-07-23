@@ -49,8 +49,7 @@ class MyCategories extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final category = myCategoriesController.categories[i];
 
-                  final color = 
-                      colors[i % colors.length];
+                  final color = colors[i % colors.length];
 
                   return Stack(
                     children: [
@@ -101,10 +100,15 @@ class MyCategories extends StatelessWidget {
                               );
                             } else if (value == 'delete') {
                               alertDialog(
-                                controller: myCategoriesController,
+                                middleText:
+                                    'Are you sure you want to delete "${category.name}"?',
                                 title: 'Delete Category',
-                                categoryName: category.name,
-                                categoryId: category.id,
+                                onPressed: () {
+                                  myCategoriesController.deleteCategoryById(
+                                    category.id,
+                                  );
+                                  Get.back();
+                                },
                               );
                             }
                           },
@@ -154,53 +158,6 @@ class MyCategories extends StatelessWidget {
             ? Center(child: CircularProgressIndicator())
             : Center(child: Text('No Categories Yet'));
       }),
-    );
-  }
-
-  Future<dynamic> alertDialog({
-    required MyCategoriesController controller,
-    required String categoryName,
-    required String categoryId,
-    required String title,
-  }) {
-    return Get.defaultDialog(
-      title: title,
-      middleText: 'Are you sure you want to delete "$categoryName"?',
-      radius: 12,
-      contentPadding: const EdgeInsets.all(20),
-      titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      middleTextStyle: const TextStyle(fontSize: 16),
-      actions: [
-        ElevatedButton.icon(
-          onPressed: () => Get.back(),
-          icon: const Icon(Icons.cancel, color: Colors.white),
-          label: const Text("Cancel"),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.grey[600],
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-        ElevatedButton.icon(
-          onPressed: () {
-            controller.deleteCategoryById(categoryId);
-            Get.back();
-          },
-          icon: const Icon(Icons.delete, color: Colors.white),
-          label: const Text("Delete"),
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red[600],
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

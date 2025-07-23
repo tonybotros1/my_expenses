@@ -104,7 +104,8 @@ Widget customText({
   bool isBold = false,
   double? fontSize,
   bool isSelectable = false,
-  bool formatDouble = true, // New parameter with default true
+  bool formatDouble = true,
+  int? maxLines = 1,
 }) {
   String formattedText = text;
 
@@ -120,7 +121,7 @@ Widget customText({
     child: isSelectable
         ? SelectableText(
             formattedText,
-            maxLines: 1,
+            maxLines: maxLines,
             style: GoogleFonts.raleway(
               fontSize: fontSize,
               color: color,
@@ -129,8 +130,8 @@ Widget customText({
           )
         : Text(
             formattedText,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: maxLines,
+            // overflow: TextOverflow.fade,
             style: GoogleFonts.raleway(
               fontSize: fontSize,
               color: color,
@@ -198,4 +199,47 @@ String textToDate(dynamic inputDate) {
 
   // Unsupported type
   return '';
+}
+
+Future<dynamic> alertDialog({
+  required String title,
+  required String middleText,
+  required void Function()? onPressed,
+}) {
+  return Get.defaultDialog(
+    title: title,
+    middleText: middleText,
+    radius: 12,
+    contentPadding: const EdgeInsets.all(20),
+    titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    middleTextStyle: const TextStyle(fontSize: 16),
+    actions: [
+      ElevatedButton.icon(
+        onPressed: () => Get.back(),
+        icon: const Icon(Icons.cancel, color: Colors.white),
+        label: const Text("Cancel"),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.grey[600],
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+      ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.delete, color: Colors.white),
+        label: const Text("Delete"),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.red[600],
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    ],
+  );
 }

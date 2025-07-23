@@ -12,7 +12,6 @@ class MyCategoriesController extends GetxController {
   var categories = <CategoryModel>[].obs;
   RxBool isScreenLoading = RxBool(false);
 
-  
   @override
   void onInit() async {
     super.onInit();

@@ -46,7 +46,7 @@ class AddNewItem extends StatelessWidget {
                     Expanded(
                       child: customDropdown(
                         label: "Category",
-                        value: _addNewItemController.selectedCategory,
+                        value: _addNewItemController.selectedCategoryValue,
                         items: _addNewItemController.categories.isEmpty
                             ? []
                             : _addNewItemController.categories

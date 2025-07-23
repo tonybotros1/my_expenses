@@ -16,6 +16,7 @@ class AddNewItemController extends GetxController {
   );
   TextEditingController noteController = TextEditingController();
   String? selectedCategory;
+  String? selectedCategoryValue;
   late Box<CategoryModel> _box;
   late Box<ItemModel> _itemsBox;
   var categories = <CategoryModel>[].obs;
@@ -24,30 +25,41 @@ class AddNewItemController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    await loadCategories();
+    // category box
+    await Hive.openBox<CategoryModel>('category_box');
+    _box = Hive.box<CategoryModel>('category_box');
+    loadCategories();
 
     // item box
     await Hive.openBox<ItemModel>('item_box');
     _itemsBox = Hive.box<ItemModel>('item_box');
 
     _box.watch().listen((_) => loadCategories());
+    if (Get.arguments != null) {
+      ItemModel arguments = Get.arguments;
+      itemNameController.text = arguments.name;
+      quantityController.text = arguments.quantity.toString();
+      priceController.text = arguments.price.toString();
+      dateController.text = textToDate(arguments.date);
+      selectedCategory = arguments.category;
+      selectedCategoryValue =
+          '${getCategoryByIdSync(arguments.category)?.name}';
+      noteController.text = arguments.note;
+    }
   }
 
   @override
   void onClose() {
-    if (Hive.isBoxOpen('category_box')) {
-      Hive.box<CategoryModel>('category_box').close();
-    }
-    if (Hive.isBoxOpen('item_box')) {
-      Hive.box<ItemModel>('item_box').close();
-    }
+    // if (Hive.isBoxOpen('category_box')) {
+    //   Hive.box<CategoryModel>('category_box').close();
+    // }
+    // if (Hive.isBoxOpen('item_box')) {
+    //   Hive.box<ItemModel>('item_box').close();
+    // }
     super.onClose();
   }
 
   loadCategories() async {
-    // category box
-    await Hive.openBox<CategoryModel>('category_box');
-    _box = Hive.box<CategoryModel>('category_box');
     categories.value = _box.values.toList();
   }
 
@@ -133,6 +145,14 @@ class AddNewItemController extends GetxController {
 
     if (picked != null) {
       date.text = textToDate(picked.toString());
+    }
+  }
+
+  CategoryModel? getCategoryByIdSync(String id) {
+    try {
+      return _box.values.firstWhere((cat) => cat.id == id);
+    } catch (e) {
+      return null;
     }
   }
 }
