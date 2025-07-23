@@ -65,6 +65,7 @@ class AddNewItem extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
+                        _addNewItemController.categoryController.clear();
                         addOrEditCategory(
                           isEdit: false,
                           controller: _addNewItemController.categoryController,
@@ -78,6 +79,12 @@ class AddNewItem extends StatelessWidget {
                       icon: Icon(Icons.add),
                     ),
                   ],
+                ),
+                customLabeledTextField(
+                  isnumber: true,
+                  label: "Quantity",
+                  controller: _addNewItemController.quantityController,
+                  keyboardType: TextInputType.number,
                 ),
                 customLabeledTextField(
                   isDouble: true,

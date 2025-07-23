@@ -22,13 +22,17 @@ class ItemModel {
   @HiveField(5)
   final String note;
 
+  @HiveField(6)
+  final int quantity;
+
   ItemModel copyWith({
     String? id,
     String? name,
     double? price,
     String? category,
-    DateTime? date,
-    String? note,
+    DateTime? date ,
+    String? note = '',
+    int? quantity = 1,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -37,6 +41,7 @@ class ItemModel {
       category: category ?? this.category,
       date: date ?? this.date,
       note: note ?? this.name,
+      quantity: quantity ?? this.quantity,
     );
   }
 
@@ -47,5 +52,6 @@ class ItemModel {
     required this.date,
     required this.note,
     required this.price,
+    required this.quantity
   });
 }

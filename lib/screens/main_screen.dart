@@ -10,6 +10,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('Hi', style: textFontForAppBar),
         centerTitle: true,
       ),
@@ -72,14 +73,7 @@ class MainScreen extends StatelessWidget {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: mainColor,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          Get.toNamed('/addNewItem');
-        },
-        child: Icon(Icons.add),
-      ),
+    
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {

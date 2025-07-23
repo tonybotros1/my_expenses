@@ -8,9 +8,12 @@ import '../models/category_model.dart';
 
 class AddNewItemController extends GetxController {
   TextEditingController itemNameController = TextEditingController();
+  TextEditingController quantityController = TextEditingController(text: '1');
   TextEditingController priceController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
+  TextEditingController dateController = TextEditingController(
+    text: textToDate(DateTime.now()),
+  );
   TextEditingController noteController = TextEditingController();
   String? selectedCategory;
   late Box<CategoryModel> _box;
@@ -21,15 +24,12 @@ class AddNewItemController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    // category box
-    await Hive.openBox<CategoryModel>('category_box');
-    _box = Hive.box<CategoryModel>('category_box');
+    await loadCategories();
 
     // item box
     await Hive.openBox<ItemModel>('item_box');
     _itemsBox = Hive.box<ItemModel>('item_box');
 
-    loadCategories();
     _box.watch().listen((_) => loadCategories());
   }
 
@@ -44,7 +44,10 @@ class AddNewItemController extends GetxController {
     super.onClose();
   }
 
-  void loadCategories() {
+  loadCategories() async {
+    // category box
+    await Hive.openBox<CategoryModel>('category_box');
+    _box = Hive.box<CategoryModel>('category_box');
     categories.value = _box.values.toList();
   }
 
@@ -75,7 +78,8 @@ class AddNewItemController extends GetxController {
       // Validate required fields
       if (itemNameController.text.isEmpty ||
           dateController.text.isEmpty ||
-          selectedCategory == null) {
+          selectedCategory == null ||
+          quantityController.text.isEmpty) {
         showSnackBar(
           title: 'Error',
           message: 'Please fill all required fields.',
@@ -96,11 +100,13 @@ class AddNewItemController extends GetxController {
       final newItem = ItemModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: itemNameController.text.trim(),
-        category:
-            selectedCategory!, // assuming it's a String or use selectedCategory.name
+        category: selectedCategory!,
         date: parsedDate,
         note: noteController.text.trim(),
-        price: double.tryParse(priceController.text.trim()) ?? 0.0,
+        price:
+            (double.tryParse(priceController.text.trim()) ?? 0.0) *
+            (int.tryParse(quantityController.text) ?? 1),
+        quantity: int.tryParse(quantityController.text) ?? 1,
       );
 
       // Add to Hive box
@@ -109,7 +115,7 @@ class AddNewItemController extends GetxController {
       // Success feedback
       showSnackBar(title: 'Done', message: 'Item added successfully');
     } catch (e) {
-      print('Add item error: $e');
+      // print('Add item error: $e');
       showSnackBar(title: 'Error', message: 'Failed to add item.');
     }
   }

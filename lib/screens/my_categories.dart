@@ -31,6 +31,7 @@ class MyCategories extends StatelessWidget {
         child: Icon(Icons.add),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: Text('My Categories', style: textFontForAppBar),
         centerTitle: true,
       ),
@@ -48,8 +49,8 @@ class MyCategories extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final category = myCategoriesController.categories[i];
 
-                  final color = myCategoriesController
-                      .colors[i % myCategoriesController.colors.length];
+                  final color = 
+                      colors[i % colors.length];
 
                   return Stack(
                     children: [

@@ -10,6 +10,8 @@ class InitScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+
       body: GetX<InitScreenController>(
         init: InitScreenController(),
         builder: (controller) {
