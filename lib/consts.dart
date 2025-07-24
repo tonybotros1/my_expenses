@@ -102,6 +102,32 @@ final Map<String, IconData> allCategoriesIcons = {
   "Hookah": Icons.smoking_rooms,
 };
 
+IconData getCategoryIcon(String? categoryName) {
+  if (categoryName == null) return Icons.more_horiz;
+
+  final normalized = categoryName.trim().toLowerCase();
+
+  // Try exact match
+  final entry = allCategoriesIcons.entries.firstWhere(
+    (e) => e.key.toLowerCase() == normalized,
+    orElse: () => const MapEntry('', Icons.more_horiz),
+  );
+
+  if (entry.key.isNotEmpty) return entry.value;
+
+  // Try singular/plural fallback
+  final altEntry = allCategoriesIcons.entries.firstWhere(
+    (e) =>
+        e.key.toLowerCase() ==
+        (normalized.endsWith('s')
+            ? normalized.substring(0, normalized.length - 1)
+            : '${normalized}s'),
+    orElse: () => const MapEntry('Other', Icons.more_horiz),
+  );
+
+  return altEntry.value;
+}
+
 Color getTextColor(Color bgColor, {double amount = 0.4}) {
   final hsl = HSLColor.fromColor(bgColor);
   final darkerHsl = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));

@@ -126,7 +126,7 @@ class AllItems extends StatelessWidget {
                       colors,
                     );
 
-                    final icon = _allItemsController.getCategoryIcon(
+                    final icon = getCategoryIcon(
                       _allItemsController
                           .getCategoryByIdSync(item.category)
                           ?.name,

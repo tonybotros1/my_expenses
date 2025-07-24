@@ -14,6 +14,7 @@ class MyCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
         backgroundColor: mainColor,
         foregroundColor: Colors.white,
@@ -43,13 +44,15 @@ class MyCategories extends StatelessWidget {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 1.1,
+                  childAspectRatio: 1,
                 ),
                 itemCount: myCategoriesController.categories.length,
                 itemBuilder: (_, i) {
                   final category = myCategoriesController.categories[i];
 
                   final color = colors[i % colors.length];
+
+                  final icon = getCategoryIcon(category.name);
 
                   return Stack(
                     children: [
@@ -58,6 +61,7 @@ class MyCategories extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         elevation: 4,
                         child: Container(
+                          width: double.infinity,
                           decoration: BoxDecoration(
                             color: color,
                             borderRadius: BorderRadius.circular(12),
@@ -66,16 +70,20 @@ class MyCategories extends StatelessWidget {
                             horizontal: 20,
                             vertical: 16,
                           ),
-                          child: Center(
-                            child: Text(
-                              category.name,
-                              style: textStyleForCards.copyWith(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(icon, color: Colors.grey.shade700, size: 50),
+                              Text(
+                                category.name,
+                                style: textStyleForCards.copyWith(
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
+                            ],
                           ),
                         ),
                       ),
@@ -84,7 +92,6 @@ class MyCategories extends StatelessWidget {
                         right: 5,
                         child: PopupMenuButton<String>(
                           onSelected: (value) {
-                            // تصرّف عند اختيار عنصر من القائمة
                             if (value == 'edit') {
                               myCategoriesController.category.text =
                                   category.name;
@@ -134,20 +141,8 @@ class MyCategories extends StatelessWidget {
                               ),
                             ),
                           ],
-                          icon: Icon(Icons.more_vert), // ← زر 3 نقاط
+                          icon: Icon(Icons.more_vert),
                         ),
-
-                        //  IconButton(
-                        //   onPressed: () {
-                        //     alertDialog(
-                        //       controller: controller,
-                        //       title: 'Delete Category',
-                        //       categoryName: category.name,
-                        //       categoryId: category.id,
-                        //     );
-                        //   },
-                        //   icon: Icon(Icons.close, color: Colors.grey[700]),
-                        // ),
                       ),
                     ],
                   );

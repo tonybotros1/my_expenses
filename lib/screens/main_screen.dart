@@ -196,7 +196,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 Obx(() {
                   return SizedBox(
-                    height: 500,
+                    height: 400,
 
                     child: ExpensePieChart(
                       data: _mainScreenController.getChartData(
