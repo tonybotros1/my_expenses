@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -101,5 +102,31 @@ class AllItemsController extends GetxController {
       await _itemsBox.delete(itemId.id);
     }
     showSnackBar(title: 'Deleted', message: 'Selected Items has been deleted');
+  }
+
+  IconData getCategoryIcon(String? categoryName) {
+    if (categoryName == null) return Icons.more_horiz;
+
+    final normalized = categoryName.trim().toLowerCase();
+
+    // Try exact match
+    final entry = allCategoriesIcons.entries.firstWhere(
+      (e) => e.key.toLowerCase() == normalized,
+      orElse: () => const MapEntry('', Icons.more_horiz),
+    );
+
+    if (entry.key.isNotEmpty) return entry.value;
+
+    // Try singular/plural fallback
+    final altEntry = allCategoriesIcons.entries.firstWhere(
+      (e) =>
+          e.key.toLowerCase() ==
+          (normalized.endsWith('s')
+              ? normalized.substring(0, normalized.length - 1)
+              : '${normalized}s'),
+      orElse: () => const MapEntry('Other', Icons.more_horiz),
+    );
+
+    return altEntry.value;
   }
 }

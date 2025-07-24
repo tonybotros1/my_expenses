@@ -132,22 +132,6 @@ class AddNewItemController extends GetxController {
     }
   }
 
-  Future<void> selectDateContext(
-    BuildContext context,
-    TextEditingController date,
-  ) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null) {
-      date.text = textToDate(picked.toString());
-    }
-  }
-
   CategoryModel? getCategoryByIdSync(String id) {
     try {
       return _box.values.firstWhere((cat) => cat.id == id);

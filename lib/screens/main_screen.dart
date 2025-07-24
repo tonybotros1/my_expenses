@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_expenses/controllers/main_screen_controller.dart';
 import '../consts.dart';
+import '../widgets/filtering_drop_down_menu.dart';
+import '../widgets/filtering_text_field.dart';
+
+import '../widgets/pie_chart.dart';
 
 class MainScreen extends StatelessWidget {
   MainScreen({super.key});
@@ -59,19 +63,13 @@ class MainScreen extends StatelessWidget {
                 Get.toNamed('/myCategories');
               },
             ),
+
+            Divider(),
             ListTile(
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: () {
                 // Get.toNamed('/settings');
-              },
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text("تسجيل الخروج"),
-              onTap: () {
-                // drawerController.logout();
               },
             ),
           ],
@@ -82,12 +80,49 @@ class MainScreen extends StatelessWidget {
         child: LayoutBuilder(
           builder: (context, constraints) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 40,
-                    horizontal: 16,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Obx(
+                    () => Row(
+                      spacing: 20,
+                      children: [
+                        Expanded(
+                          child: DateFilterDropdown(
+                            selectedFilter:
+                                _mainScreenController.selectedFilter.value,
+                            onChanged: (filter) {
+                              _mainScreenController.dateController.value
+                                  .clear();
+                              _mainScreenController.setFilter(filter!);
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: CustomFilterField(
+                            controller:
+                                _mainScreenController.dateController.value,
+                            hintText: 'Custom Date',
+                            suffixIcon: IconButton(
+                              iconSize: 20,
+                              color: Colors.grey.shade700,
+                              onPressed: () {
+                                selectDateContext(
+                                  context,
+                                  _mainScreenController.dateController.value,
+                                );
+                              },
+                              icon: Icon(Icons.date_range_outlined),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
                   child: Stack(
                     children: [
                       Container(
@@ -107,10 +142,13 @@ class MainScreen extends StatelessWidget {
                               fontSize: 20,
                               isBold: true,
                             ),
-                            customText(
-                              text: '3000000',
-                              fontSize: 50,
-                              maxWidth: null,
+                            Obx(
+                              () => customText(
+                                text: _mainScreenController.allExpenses.value
+                                    .toString(),
+                                fontSize: 50,
+                                maxWidth: null,
+                              ),
                             ),
                           ],
                         ),
@@ -156,6 +194,17 @@ class MainScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                Obx(() {
+                  return SizedBox(
+                    height: 500,
+
+                    child: ExpensePieChart(
+                      data: _mainScreenController.getChartData(
+                        _mainScreenController.items,
+                      ),
+                    ),
+                  );
+                }),
               ],
             );
           },

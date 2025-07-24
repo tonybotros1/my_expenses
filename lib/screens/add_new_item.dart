@@ -96,7 +96,7 @@ class AddNewItem extends StatelessWidget {
                 customLabeledTextField(
                   suffixIcon: IconButton(
                     onPressed: () {
-                      _addNewItemController.selectDateContext(
+                     selectDateContext(
                         context,
                         _addNewItemController.dateController,
                       );

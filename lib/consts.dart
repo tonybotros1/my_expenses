@@ -71,6 +71,37 @@ final colors = [
   Color(0xFFB2DFDB),
 ];
 
+final Map<String, IconData> allCategoriesIcons = {
+  "Food": Icons.fastfood,
+  "Drinks": Icons.local_drink,
+  "Groceries": Icons.shopping_cart,
+  "Transport": Icons.directions_car,
+  "Fuel": Icons.local_gas_station,
+  "Bills": Icons.receipt,
+  "Rent": Icons.house,
+  "Health": Icons.health_and_safety,
+  "Fitness": Icons.fitness_center,
+  "Clothing": Icons.checkroom,
+  "Education": Icons.school,
+  "Entertainment": Icons.movie,
+  "Subscriptions": Icons.subscriptions,
+  "Travel": Icons.airplanemode_active,
+  "Gifts": Icons.card_giftcard,
+  "Donations": Icons.volunteer_activism,
+  "Savings": Icons.savings,
+  "Pets": Icons.pets,
+  "Insurance": Icons.security,
+  "Internet": Icons.wifi,
+  "Phone": Icons.phone_android,
+  "Kids": Icons.child_friendly,
+  "Beauty": Icons.brush,
+  "Home": Icons.chair,
+  "Maintenance": Icons.build,
+  "Business": Icons.business_center,
+  "Other": Icons.more_horiz,
+  "Hookah": Icons.smoking_rooms,
+};
+
 Color getTextColor(Color bgColor, {double amount = 0.4}) {
   final hsl = HSLColor.fromColor(bgColor);
   final darkerHsl = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
@@ -242,4 +273,20 @@ Future<dynamic> alertDialog({
       ),
     ],
   );
+}
+
+Future<void> selectDateContext(
+  BuildContext context,
+  TextEditingController date,
+) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2101),
+  );
+
+  if (picked != null) {
+    date.text = textToDate(picked.toString());
+  }
 }
