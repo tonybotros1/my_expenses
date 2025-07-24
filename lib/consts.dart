@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -135,22 +136,22 @@ Color getTextColor(Color bgColor, {double amount = 0.4}) {
 }
 
 var textFontForAppBar = GoogleFonts.raleway(
-  fontSize: 25,
+  fontSize: 25.sp,
   fontWeight: FontWeight.bold,
 );
-double textFieldHeight = 35;
-TextStyle textFieldFontStyle = const TextStyle(
-  fontSize: 14,
+double textFieldHeight = 35.w;
+TextStyle textFieldFontStyle =  TextStyle(
+  fontSize: 14.sp,
   color: Colors.black,
 );
 TextStyle textFieldLabelStyle = TextStyle(
   color: Colors.grey.shade700,
-  fontSize: 12,
+  fontSize: 12.sp,
   fontWeight: FontWeight.bold,
 );
 
-var textStyleForCards = const TextStyle(
-  fontSize: 22,
+var textStyleForCards =  TextStyle(
+  fontSize: 22.sp,
   fontWeight: FontWeight.bold,
   color: Color(0xffE9F5BE),
 );
@@ -180,7 +181,7 @@ Widget customText({
             formattedText,
             maxLines: maxLines,
             style: GoogleFonts.raleway(
-              fontSize: fontSize,
+              fontSize: fontSize?.sp,
               color: color,
               fontWeight: isBold ? FontWeight.bold : null,
             ),
@@ -190,7 +191,7 @@ Widget customText({
             maxLines: maxLines,
             // overflow: TextOverflow.fade,
             style: GoogleFonts.raleway(
-              fontSize: fontSize,
+              fontSize: fontSize?.sp,
               color: color,
               fontWeight: isBold ? FontWeight.bold : null,
             ),
@@ -207,12 +208,12 @@ SnackbarController showSnackBar({
     message,
     snackPosition: SnackPosition.TOP,
     snackStyle: SnackStyle.FLOATING,
-    margin: const EdgeInsets.only(left: 20, bottom: 20),
-    borderRadius: 10,
+    margin:  EdgeInsets.only(left: 20.w, bottom: 20.h),
+    borderRadius: 10.r,
     backgroundColor: Colors.black87,
     colorText: Colors.white,
     duration: const Duration(seconds: 2),
-    maxWidth: 300,
+    maxWidth: 300.w,
     isDismissible: true,
     forwardAnimationCurve: Curves.easeOutBack,
     animationDuration: const Duration(milliseconds: 500),
@@ -266,10 +267,10 @@ Future<dynamic> alertDialog({
   return Get.defaultDialog(
     title: title,
     middleText: middleText,
-    radius: 12,
+    radius: 12.w,
     contentPadding: const EdgeInsets.all(20),
-    titleStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-    middleTextStyle: const TextStyle(fontSize: 16),
+    titleStyle:  TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+    middleTextStyle:  TextStyle(fontSize: 16.sp),
     actions: [
       ElevatedButton.icon(
         onPressed: () => Get.back(),
@@ -278,7 +279,7 @@ Future<dynamic> alertDialog({
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.grey[600],
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -291,7 +292,7 @@ Future<dynamic> alertDialog({
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.red[600],
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

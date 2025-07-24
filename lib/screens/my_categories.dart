@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../consts.dart';
 import '../controllers/my_categories_controller.dart';
@@ -19,6 +20,7 @@ class MyCategories extends StatelessWidget {
         backgroundColor: mainColor,
         foregroundColor: Colors.white,
         onPressed: () {
+          myCategoriesController.category.clear();
           addOrEditCategory(
             controller: myCategoriesController.category,
             onPressed: () {
@@ -39,7 +41,7 @@ class MyCategories extends StatelessWidget {
       body: Obx(() {
         return myCategoriesController.categories.isNotEmpty
             ? GridView.builder(
-                padding: const EdgeInsets.all(15),
+                padding: EdgeInsets.all(15.w),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
@@ -58,28 +60,32 @@ class MyCategories extends StatelessWidget {
                     children: [
                       Material(
                         shadowColor: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(10.r),
                         elevation: 4,
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: color,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.r),
                           ),
                           padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
+                            horizontal: 20.w,
+                            vertical: 16.h,
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Icon(icon, color: Colors.grey.shade700, size: 50),
+                              Icon(
+                                icon,
+                                color: Colors.grey.shade700,
+                                size: 50.sp,
+                              ),
                               Text(
                                 category.name,
                                 style: textStyleForCards.copyWith(
                                   color: Colors.black87,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 20,
+                                  fontSize: 20.sp,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -88,8 +94,8 @@ class MyCategories extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 5,
-                        right: 5,
+                        top: 5.h,
+                        right: 5.w,
                         child: PopupMenuButton<String>(
                           onSelected: (value) {
                             if (value == 'edit') {
@@ -125,7 +131,7 @@ class MyCategories extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Icon(Icons.edit, color: Colors.black54),
-                                  SizedBox(width: 10),
+                                  SizedBox(width: 10.w),
                                   Text('Edit'),
                                 ],
                               ),
@@ -135,7 +141,7 @@ class MyCategories extends StatelessWidget {
                               child: Row(
                                 children: [
                                   Icon(Icons.delete, color: Colors.red),
-                                  SizedBox(width: 10),
+                                  SizedBox(width: 10.w),
                                   Text('Delete'),
                                 ],
                               ),

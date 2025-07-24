@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:my_expenses/consts.dart';
@@ -21,7 +22,7 @@ class InitScreen extends StatelessWidget {
       bottomNavigationBar: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+          padding:  EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 10.h),
           child: GetX<InitScreenController>(
             builder: (controller) {
               return GNav(
@@ -29,7 +30,7 @@ class InitScreen extends StatelessWidget {
                 activeColor: Colors.white,
                 color: Colors.grey[700],
                 tabBackgroundColor: mainColor,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                 selectedIndex: controller.selectedIndex.value,
                 onTabChange: (index) {
                   controller.selectedIndex.value = index;

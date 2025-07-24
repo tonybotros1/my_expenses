@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'capital_letters_field.dart';
 import 'date_time_field.dart';
@@ -27,11 +28,11 @@ Widget customLabeledTextField({
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: 15,
+          fontSize: 15.sp,
           color: Colors.grey.shade700,
         ),
       ),
-      const SizedBox(height: 6),
+       SizedBox(height: 6.h),
       TextFormField(
         inputFormatters: isnumber == true
             ? [FilteringTextInputFormatter.digitsOnly]
@@ -49,7 +50,7 @@ Widget customLabeledTextField({
         decoration: InputDecoration(
           icon: icon,
           suffixIcon: suffixIcon,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+          hintStyle:  TextStyle(color: Colors.grey, fontSize: 14.sp),
           // labelText: labelText,
           alignLabelWithHint: true,
 
@@ -63,30 +64,30 @@ Widget customLabeledTextField({
           fillColor: Colors.grey.shade200,
           focusedBorder: OutlineInputBorder(
             // borderRadius: BorderRadius.circular(borderRadius!),
-            borderSide: BorderSide(color: Colors.grey, width: 2.0),
+            borderSide: BorderSide(color: Colors.grey, width: 2.0.w),
           ),
           enabledBorder: OutlineInputBorder(
             // borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: Colors.grey, width: 1.0),
+            borderSide: BorderSide(color: Colors.grey, width: 1.0.w),
           ),
           disabledBorder: OutlineInputBorder(
             // borderRadius: BorderRadius.circular(borderRadius),
-            borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
+            borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0.w),
           ),
-          errorBorder: const OutlineInputBorder(
+          errorBorder:  OutlineInputBorder(
             // borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: Colors.red, width: 1.0),
+            borderSide: BorderSide(color: Colors.red, width: 1.0.w),
           ),
-          focusedErrorBorder: const OutlineInputBorder(
+          focusedErrorBorder:  OutlineInputBorder(
             // borderRadius: BorderRadius.circular(5),
-            borderSide: BorderSide(color: Colors.red, width: 2.0),
+            borderSide: BorderSide(color: Colors.red, width: 2.0.w),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 16,
+          contentPadding:  EdgeInsets.symmetric(
+            vertical: 16.h,
+            horizontal: 16.w,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(5.r),
             borderSide: BorderSide.none,
           ),
         ),

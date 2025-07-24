@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:my_expenses/controllers/all_items_controller.dart';
@@ -19,25 +20,24 @@ class AllItems extends StatelessWidget {
           _allItemsController.exitSelectionMode();
         }
       },
-
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-
+          preferredSize: Size.fromHeight(kToolbarHeight.h),
           child: Obx(
             () => _allItemsController.isSelectionMode.value
                 ? AppBar(
                     title: Text(
                       "${_allItemsController.selectedItems.length} selected",
+                      style: TextStyle(fontSize: 18.sp),
                     ),
                     leading: IconButton(
-                      icon: Icon(Icons.close),
+                      icon: Icon(Icons.close, size: 24.sp),
                       onPressed: () => _allItemsController.exitSelectionMode(),
                     ),
                     actions: [
                       IconButton(
-                        icon: Icon(Icons.delete),
+                        icon: Icon(Icons.delete, size: 24.sp),
                         onPressed: () {
                           alertDialog(
                             middleText:
@@ -50,11 +50,10 @@ class AllItems extends StatelessWidget {
                           );
                         },
                       ),
-
                       _allItemsController.selectedItems.length > 1
                           ? SizedBox()
                           : IconButton(
-                              icon: Icon(Icons.edit),
+                              icon: Icon(Icons.edit, size: 24.sp),
                               onPressed: () {
                                 Get.toNamed(
                                   '/addNewItem',
@@ -101,14 +100,13 @@ class AllItems extends StatelessWidget {
                   ),
           ),
         ),
-
         floatingActionButton: FloatingActionButton(
           backgroundColor: mainColor,
           foregroundColor: Colors.white,
           onPressed: () {
             Get.toNamed('/addNewItem');
           },
-          child: Icon(Icons.add),
+          child: Icon(Icons.add, size: 24.sp),
         ),
         body: Obx(() {
           return _allItemsController.allItems.isEmpty &&
@@ -116,7 +114,9 @@ class AllItems extends StatelessWidget {
               ? Center(child: CircularProgressIndicator())
               : _allItemsController.allItems.isEmpty &&
                     _allItemsController.isScreenLoading.isFalse
-              ? Center(child: Text('No Items'))
+              ? Center(
+                  child: Text('No Items', style: TextStyle(fontSize: 16.sp)),
+                )
               : ListView.builder(
                   itemCount: _allItemsController.allItems.length,
                   itemBuilder: (context, i) {
@@ -125,7 +125,6 @@ class AllItems extends StatelessWidget {
                       i,
                       colors,
                     );
-
                     final icon = getCategoryIcon(
                       _allItemsController
                           .getCategoryByIdSync(item.category)
@@ -134,8 +133,9 @@ class AllItems extends StatelessWidget {
 
                     return Obx(() {
                       final textColor = getTextColor(bgColor);
-                      bool isSelected = _allItemsController.selectedItems
+                      final isSelected = _allItemsController.selectedItems
                           .contains(i);
+
                       return GestureDetector(
                         onLongPress: () {
                           _allItemsController.enterSelectionMode(i, item);
@@ -146,56 +146,63 @@ class AllItems extends StatelessWidget {
                                 _allItemsController.enterSelectionMode(i, item);
                               },
                         child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 8),
-                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          margin: EdgeInsets.only(
+                            bottom: 16.h,
+                            left: 12.w,
+                            right: 12.w,
+                          ),
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Colors.grey.shade200
                                 : Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(20.r),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black12,
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
+                                blurRadius: 10.r,
+                                offset: Offset(0, 5.h),
                               ),
                             ],
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16.w),
                             child: Column(
-                              spacing: 30,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  spacing: 20,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
-                                      spacing: 15,
                                       children: [
                                         Icon(
                                           icon,
-                                          size: 25,
+                                          size: 25.sp,
                                           color: Colors.grey,
                                         ),
+                                        SizedBox(width: 10.w),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 6,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12.w,
+                                            vertical: 6.h,
                                           ),
                                           decoration: BoxDecoration(
                                             color: bgColor,
                                             borderRadius: BorderRadius.circular(
-                                              20,
+                                              20.r,
                                             ),
                                           ),
                                           child: customText(
                                             text:
-                                                '${_allItemsController.getCategoryByIdSync(item.category)?.name}',
+                                                _allItemsController
+                                                    .getCategoryByIdSync(
+                                                      item.category,
+                                                    )
+                                                    ?.name ??
+                                                '',
                                             color: textColor,
-                                            fontSize: 14,
+                                            fontSize: 14.sp,
                                             isBold: true,
                                           ),
                                         ),
@@ -203,26 +210,26 @@ class AllItems extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.calendar_today,
-                                          size: 14,
+                                          size: 14.sp,
                                           color: Colors.blueGrey,
                                         ),
-                                        const SizedBox(width: 4),
+                                        SizedBox(width: 4.w),
                                         customText(
                                           text: DateFormat.yMMMMd().format(
                                             item.date,
                                           ),
                                           color: Colors.blueGrey,
-                                          fontSize: 13,
+                                          fontSize: 13.sp,
                                           isBold: true,
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
+                                SizedBox(height: 12.h),
                                 Row(
-                                  spacing: 20,
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
@@ -230,7 +237,7 @@ class AllItems extends StatelessWidget {
                                       child: customText(
                                         text: '${item.name} x${item.quantity}',
                                         isBold: true,
-                                        fontSize: 18,
+                                        fontSize: 18.sp,
                                         color: Colors.black,
                                         maxLines: 3,
                                       ),
@@ -238,15 +245,16 @@ class AllItems extends StatelessWidget {
                                     customText(
                                       text: item.price.toStringAsFixed(2),
                                       isBold: true,
-                                      fontSize: 20,
+                                      fontSize: 20.sp,
                                       color: textColor,
                                       formatDouble: true,
                                     ),
                                   ],
                                 ),
+                                SizedBox(height: 10.h),
                                 customText(
                                   text: item.note,
-                                  fontSize: 14,
+                                  fontSize: 14.sp,
                                   color: Colors.grey.shade700,
                                   isBold: true,
                                 ),

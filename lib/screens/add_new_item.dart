@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:my_expenses/models/category_model.dart';
 import '../consts.dart';
@@ -30,10 +31,10 @@ class AddNewItem extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding:  EdgeInsets.all(16.0.w),
           child: Obx(() {
             return Column(
-              spacing: 20,
+              spacing: 20.w,
               children: [
                 customLabeledTextField(
                   label: "Item Name",
@@ -131,8 +132,8 @@ Future<dynamic> addOrEditCategory({
   return Get.dialog(
     Dialog(
       child: Container(
-        padding: EdgeInsets.all(16),
-        height: 200,
+        padding: EdgeInsets.all(16.w),
+        height: 200.h,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,

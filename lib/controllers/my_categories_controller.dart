@@ -26,9 +26,9 @@ class MyCategoriesController extends GetxController {
 
   @override
   void onClose() {
-    if (Hive.isBoxOpen('category_box')) {
-      Hive.box<CategoryModel>('items').close();
-    }
+    // if (Hive.isBoxOpen('category_box')) {
+    //   Hive.box<CategoryModel>('items').close();
+    // }
     super.onClose();
   }
 
@@ -58,6 +58,7 @@ class MyCategoriesController extends GetxController {
   }
 
   void addCategoryByName(String name) {
+    print('fffffffffffffffffffffffffffffffffff $name');
     final exists = categories.any(
       (cat) => cat.name.toLowerCase() == name.toLowerCase(),
     );
