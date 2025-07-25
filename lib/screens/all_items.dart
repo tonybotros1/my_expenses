@@ -166,7 +166,7 @@ class AllItems extends StatelessWidget {
                             ],
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(16.w),
+                            padding: EdgeInsets.all(16.r),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

@@ -24,6 +24,7 @@ class MainScreen extends StatelessWidget {
         centerTitle: true,
       ),
       drawer: Drawer(
+        width: (Get.width * 0.75).w,
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -49,15 +50,15 @@ class MainScreen extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
+              leading: Icon(Icons.home, size: 24.sp),
+              title: Text("Home", style: regTextStyle),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: Icon(Icons.category_outlined),
-              title: Text("My Categories"),
+              leading: Icon(Icons.category_outlined, size: 24.sp),
+              title: Text("My Categories", style: regTextStyle),
               onTap: () {
                 Get.back();
                 Get.toNamed('/myCategories');
@@ -65,8 +66,8 @@ class MainScreen extends StatelessWidget {
             ),
             Divider(),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text("Settings"),
+              leading: Icon(Icons.settings, size: 24.sp),
+              title: Text("Settings", style: regTextStyle),
               onTap: () {
                 Get.toNamed('/settings');
               },
@@ -101,7 +102,7 @@ class MainScreen extends StatelessWidget {
                           child: CustomFilterField(
                             controller:
                                 _mainScreenController.dateController.value,
-                            hintText: 'Custom Date',
+                            hintText: 'Date',
                             suffixIcon: IconButton(
                               iconSize: 20.sp,
                               color: Colors.grey.shade700,
@@ -124,7 +125,7 @@ class MainScreen extends StatelessWidget {
                   child: Stack(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(35.w),
+                        padding: EdgeInsets.all(35.r),
                         width: constraints.maxWidth,
                         height: 220.h,
                         decoration: BoxDecoration(

@@ -41,12 +41,12 @@ class MyCategories extends StatelessWidget {
       body: Obx(() {
         return myCategoriesController.categories.isNotEmpty
             ? GridView.builder(
-                padding: EdgeInsets.all(15.w),
+                padding: EdgeInsets.all(15.r),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 1,
+                  childAspectRatio: 1.1,
                 ),
                 itemCount: myCategoriesController.categories.length,
                 itemBuilder: (_, i) {
@@ -78,7 +78,7 @@ class MyCategories extends StatelessWidget {
                               Icon(
                                 icon,
                                 color: Colors.grey.shade700,
-                                size: 50.sp,
+                                size: 40.sp,
                               ),
                               Text(
                                 category.name,

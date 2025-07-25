@@ -139,18 +139,17 @@ var textFontForAppBar = GoogleFonts.raleway(
   fontSize: 25.sp,
   fontWeight: FontWeight.bold,
 );
-double textFieldHeight = 35.w;
-TextStyle textFieldFontStyle =  TextStyle(
-  fontSize: 14.sp,
-  color: Colors.black,
-);
+double textFieldHeight = 45.w;
+TextStyle textFieldFontStyle = TextStyle(fontSize: 14.sp, color: Colors.black);
 TextStyle textFieldLabelStyle = TextStyle(
   color: Colors.grey.shade700,
   fontSize: 12.sp,
   fontWeight: FontWeight.bold,
 );
 
-var textStyleForCards =  TextStyle(
+var regTextStyle = TextStyle(fontSize: 15.sp);
+
+var textStyleForCards = TextStyle(
   fontSize: 22.sp,
   fontWeight: FontWeight.bold,
   color: Color(0xffE9F5BE),
@@ -208,7 +207,7 @@ SnackbarController showSnackBar({
     message,
     snackPosition: SnackPosition.TOP,
     snackStyle: SnackStyle.FLOATING,
-    margin:  EdgeInsets.only(left: 20.w, bottom: 20.h),
+    margin: EdgeInsets.only(left: 20.w, bottom: 20.h),
     borderRadius: 10.r,
     backgroundColor: Colors.black87,
     colorText: Colors.white,
@@ -268,9 +267,9 @@ Future<dynamic> alertDialog({
     title: title,
     middleText: middleText,
     radius: 12.w,
-    contentPadding: const EdgeInsets.all(20),
-    titleStyle:  TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
-    middleTextStyle:  TextStyle(fontSize: 16.sp),
+    contentPadding: EdgeInsets.all(20.r),
+    titleStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+    middleTextStyle: TextStyle(fontSize: 16.sp),
     actions: [
       ElevatedButton.icon(
         onPressed: () => Get.back(),
@@ -279,7 +278,7 @@ Future<dynamic> alertDialog({
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.grey[600],
-          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -292,7 +291,7 @@ Future<dynamic> alertDialog({
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: Colors.red[600],
-          padding:  EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

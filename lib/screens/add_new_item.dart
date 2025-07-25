@@ -31,7 +31,7 @@ class AddNewItem extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.all(16.0.w),
+          padding: EdgeInsets.all(16.0.r),
           child: Obx(() {
             return Column(
               spacing: 20.w,
@@ -65,6 +65,11 @@ class AddNewItem extends StatelessWidget {
                       ),
                     ),
                     IconButton(
+                      padding: EdgeInsets.all(8.r),
+                      constraints: BoxConstraints(
+                        minWidth: 20.w,
+                        minHeight: 20.h,
+                      ),
                       onPressed: () {
                         _addNewItemController.categoryController.clear();
                         addOrEditCategory(
@@ -77,7 +82,7 @@ class AddNewItem extends StatelessWidget {
                           },
                         );
                       },
-                      icon: Icon(Icons.add),
+                      icon: Icon(Icons.add, size: 24.sp),
                     ),
                   ],
                 ),
@@ -97,7 +102,7 @@ class AddNewItem extends StatelessWidget {
                 customLabeledTextField(
                   suffixIcon: IconButton(
                     onPressed: () {
-                     selectDateContext(
+                      selectDateContext(
                         context,
                         _addNewItemController.dateController,
                       );
@@ -113,7 +118,6 @@ class AddNewItem extends StatelessWidget {
                   label: "Note",
                   maxLines: 10,
                   controller: _addNewItemController.noteController,
-                  keyboardType: TextInputType.datetime,
                 ),
               ],
             );
@@ -132,8 +136,8 @@ Future<dynamic> addOrEditCategory({
   return Get.dialog(
     Dialog(
       child: Container(
-        padding: EdgeInsets.all(16.w),
-        height: 200.h,
+        padding: EdgeInsets.all(16.r),
+        height: 180.h,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,

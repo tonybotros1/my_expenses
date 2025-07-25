@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../consts.dart';
 import '../controllers/main_screen_controller.dart';
 
 class DateFilterDropdown extends StatelessWidget {
@@ -26,7 +27,8 @@ class DateFilterDropdown extends StatelessWidget {
     };
 
     return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      height: textFieldHeight,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12.r),
@@ -37,7 +39,7 @@ class DateFilterDropdown extends StatelessWidget {
           value: selectedFilter,
 
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 15.sp,
             fontWeight: FontWeight.w600,
             color: Colors.grey.shade700,
           ),

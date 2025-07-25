@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_expenses/consts.dart';
 
 class CustomFilterField extends StatelessWidget {
   final TextEditingController? controller;
@@ -18,13 +19,16 @@ class CustomFilterField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+      height: textFieldHeight,
+
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: TextFormField(
+        
         readOnly: true,
         controller: controller,
         onChanged: onChanged,
@@ -32,12 +36,12 @@ class CustomFilterField extends StatelessWidget {
           suffixIcon: suffixIcon,
           hintStyle: TextStyle(color: Colors.grey),
           hintText: hintText,
-          border: InputBorder.none, // Remove default underline
-          isDense: true,
-          contentPadding:  EdgeInsets.symmetric(vertical: 12.h),
+          border: InputBorder.none,
+          // isDense: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
         ),
         style: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w600,
           color: Colors.grey.shade700,
         ),
