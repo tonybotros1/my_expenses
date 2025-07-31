@@ -58,7 +58,6 @@ class MyCategoriesController extends GetxController {
   }
 
   void addCategoryByName(String name) {
-    print('fffffffffffffffffffffffffffffffffff $name');
     final exists = categories.any(
       (cat) => cat.name.toLowerCase() == name.toLowerCase(),
     );
