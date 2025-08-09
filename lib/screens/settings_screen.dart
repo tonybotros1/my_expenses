@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.all(25.r),
+          padding: EdgeInsets.all(25.r),
           child: Column(
             spacing: 30,
             children: [
@@ -61,6 +61,8 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+        Spacer(),
+        IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
       ],
     );
   }
