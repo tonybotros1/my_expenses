@@ -20,10 +20,18 @@ class AddNewItem extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text('New Item', style: textFontForAppBar),
+        leading: IconButton(onPressed: (){
+          Get.back();
+          _addNewItemController.isinEditMode.value = false;
+        }, icon: Icon(Icons.arrow_back_ios)),
         actions: [
           IconButton(
             onPressed: () {
-              _addNewItemController.addNewItem();
+              _addNewItemController.isinEditMode.isFalse
+                  ? _addNewItemController.addNewItem()
+                  : _addNewItemController.editItem(
+                      _addNewItemController.itemid.value,
+                    );
             },
             icon: Icon(Icons.done),
           ),

@@ -21,6 +21,8 @@ class AddNewItemController extends GetxController {
   late Box<ItemModel> _itemsBox;
   var categories = <CategoryModel>[].obs;
   DateFormat formatter = DateFormat('dd-MM-yyyy');
+  RxBool isinEditMode = RxBool(false);
+  RxString itemid = RxString('');
 
   @override
   void onInit() async {
@@ -36,7 +38,9 @@ class AddNewItemController extends GetxController {
 
     _box.watch().listen((_) => loadCategories());
     if (Get.arguments != null) {
+      isinEditMode.value = true;
       ItemModel arguments = Get.arguments;
+      itemid.value = arguments.id;
       itemNameController.text = arguments.name;
       quantityController.text = arguments.quantity.toString();
       priceController.text = arguments.price.toString();
@@ -129,6 +133,58 @@ class AddNewItemController extends GetxController {
     } catch (e) {
       // print('Add item error: $e');
       showSnackBar(title: 'Error', message: 'Failed to add item.');
+    }
+  }
+
+  void editItem(String id) async {
+    try {
+      // Validate required fields
+      if (itemNameController.text.isEmpty ||
+          dateController.text.isEmpty ||
+          selectedCategory == null ||
+          quantityController.text.isEmpty) {
+        showSnackBar(
+          title: 'Error',
+          message: 'Please fill all required fields.',
+        );
+        return;
+      }
+
+      // Parse the date
+      DateTime parsedDate;
+      try {
+        parsedDate = formatter.parse(dateController.text);
+      } catch (e) {
+        showSnackBar(title: 'Error', message: 'Invalid date format.');
+        return;
+      }
+
+      // Get existing item (optional check)
+      final existingItem = _itemsBox.get(id);
+      if (existingItem == null) {
+        showSnackBar(title: 'Error', message: 'Item not found.');
+        return;
+      }
+
+      // Create updated item
+      final updatedItem = ItemModel(
+        id: id, // keep the same id
+        name: itemNameController.text.trim(),
+        category: selectedCategory!,
+        date: parsedDate,
+        note: noteController.text.trim(),
+        price:
+            (double.tryParse(priceController.text.trim()) ?? 0.0) *
+            (int.tryParse(quantityController.text) ?? 1),
+        quantity: int.tryParse(quantityController.text) ?? 1,
+      );
+
+      // Update the item in Hive box
+      await _itemsBox.put(id, updatedItem);
+
+      showSnackBar(title: 'Done', message: 'Item updated successfully');
+    } catch (e) {
+      showSnackBar(title: 'Error', message: 'Failed to update item.');
     }
   }
 
