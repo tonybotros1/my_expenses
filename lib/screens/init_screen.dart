@@ -10,9 +10,9 @@ class InitScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    final colorScheme = Theme.of(context).colorScheme;
 
+    return Scaffold(
       body: GetX<InitScreenController>(
         init: InitScreenController(),
         builder: (controller) {
@@ -20,15 +20,15 @@ class InitScreen extends StatelessWidget {
         },
       ),
       bottomNavigationBar: Container(
-        color: Colors.white,
+        color: colorScheme.surface,
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 10.h),
           child: GetX<InitScreenController>(
             builder: (controller) {
               return GNav(
                 gap: 8,
                 activeColor: Colors.white,
-                color: Colors.grey[700],
+                color: colorScheme.onSurfaceVariant,
                 tabBackgroundColor: mainColor,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                 selectedIndex: controller.selectedIndex.value,

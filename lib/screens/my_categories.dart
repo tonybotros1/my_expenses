@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../consts.dart';
+import '../controllers/daily_tools_controller.dart';
 import '../controllers/my_categories_controller.dart';
+import '../models/category_model.dart';
 import 'add_new_item.dart';
 
 class MyCategories extends StatelessWidget {
@@ -11,14 +13,17 @@ class MyCategories extends StatelessWidget {
   final MyCategoriesController myCategoriesController = Get.put(
     MyCategoriesController(),
   );
+  final DailyToolsController dailyToolsController =
+      Get.isRegistered<DailyToolsController>()
+      ? Get.find<DailyToolsController>()
+      : Get.put(DailyToolsController(), permanent: true);
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: mainColor,
-        foregroundColor: Colors.white,
         onPressed: () {
           myCategoriesController.category.clear();
           addOrEditCategory(
@@ -33,11 +38,7 @@ class MyCategories extends StatelessWidget {
         },
         child: Icon(Icons.add),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('My Categories', style: textFontForAppBar),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('My Categories', style: textFontForAppBar)),
       body: Obx(() {
         return myCategoriesController.categories.isNotEmpty
             ? GridView.builder(
@@ -52,9 +53,8 @@ class MyCategories extends StatelessWidget {
                 itemBuilder: (_, i) {
                   final category = myCategoriesController.categories[i];
 
-                  final color = colors[i % colors.length];
-
-                  final icon = getCategoryIcon(category.name);
+                  final color = dailyToolsController.categoryColor(category, i);
+                  final icon = dailyToolsController.categoryIcon(category);
 
                   return Stack(
                     children: [
@@ -77,7 +77,7 @@ class MyCategories extends StatelessWidget {
                             children: [
                               Icon(
                                 icon,
-                                color: Colors.grey.shade700,
+                                color: Colors.grey.shade800,
                                 size: 40.sp,
                               ),
                               Text(
@@ -116,12 +116,17 @@ class MyCategories extends StatelessWidget {
                                 middleText:
                                     'Are you sure you want to delete "${category.name}"?',
                                 title: 'Delete Category',
-                                onPressed: () {
-                                  myCategoriesController.deleteCategoryById(
-                                    category.id,
-                                  );
+                                onPressed: () async {
                                   Get.back();
+                                  await myCategoriesController
+                                      .deleteCategoryById(category.id);
                                 },
+                              );
+                            } else if (value == 'style') {
+                              _showCategoryStyleDialog(
+                                context,
+                                category,
+                                color,
                               );
                             }
                           },
@@ -130,9 +135,25 @@ class MyCategories extends StatelessWidget {
                               value: 'edit',
                               child: Row(
                                 children: [
-                                  Icon(Icons.edit, color: Colors.black54),
+                                  Icon(
+                                    Icons.edit,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
                                   SizedBox(width: 10.w),
                                   Text('Edit'),
+                                ],
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 'style',
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.palette_outlined,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text('Style'),
                                 ],
                               ),
                             ),
@@ -156,9 +177,109 @@ class MyCategories extends StatelessWidget {
               )
             : myCategoriesController.categories.isEmpty &&
                   myCategoriesController.isScreenLoading.isTrue
-            ? Center(child: CircularProgressIndicator())
-            : Center(child: Text('No Categories Yet'));
+            ? const Center(child: CircularProgressIndicator())
+            : Center(
+                child: Text(
+                  'No Categories Yet',
+                  style: TextStyle(color: colorScheme.onSurface),
+                ),
+              );
       }),
+    );
+  }
+
+  Future<void> _showCategoryStyleDialog(
+    BuildContext context,
+    CategoryModel category,
+    Color currentColor,
+  ) {
+    final selectedColor = currentColor.obs;
+    final selectedIcon = dailyToolsController.categoryIconLabel(category).obs;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Get.dialog(
+      Dialog(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16.r),
+          child: Obx(
+            () => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  category.name,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.sp,
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Wrap(
+                  spacing: 10.w,
+                  runSpacing: 10.h,
+                  children: categoryStyleColors.map((color) {
+                    final isSelected = selectedColor.value == color;
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(99),
+                      onTap: () => selectedColor.value = color,
+                      child: Container(
+                        width: 38.w,
+                        height: 38.w,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected ? mainColor : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.h),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedIcon.value,
+                  decoration: const InputDecoration(labelText: 'Icon'),
+                  items: allCategoriesIcons.entries
+                      .map(
+                        (entry) => DropdownMenuItem(
+                          value: entry.key,
+                          child: Row(
+                            children: [
+                              Icon(entry.value, size: 20.sp),
+                              SizedBox(width: 10.w),
+                              Text(entry.key),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) selectedIcon.value = value;
+                  },
+                ),
+                SizedBox(height: 18.h),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await dailyToolsController.setCategoryStyle(
+                        categoryId: category.id,
+                        color: selectedColor.value,
+                        icon: selectedIcon.value,
+                      );
+                      Get.back();
+                    },
+                    child: const Text('Save'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

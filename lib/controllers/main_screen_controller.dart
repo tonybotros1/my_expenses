@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -18,6 +20,8 @@ class MainScreenController extends GetxController {
   var customDate = Rxn<DateTime>();
   RxDouble allExpenses = RxDouble(0.0);
   late Box<CategoryModel> _box;
+  StreamSubscription<BoxEvent>? _itemsSubscription;
+  StreamSubscription<BoxEvent>? _categorySubscription;
   var categories = <CategoryModel>[].obs;
 
   @override
@@ -27,7 +31,11 @@ class MainScreenController extends GetxController {
     await Hive.openBox<ItemModel>('item_box');
     _itemsBox = Hive.box<ItemModel>('item_box');
     loadItems();
-    _itemsBox.watch().listen((_) => loadItems());
+    _itemsSubscription = _itemsBox.watch().listen((_) => loadItems());
+    _categorySubscription = _box.watch().listen((_) {
+      loadCategories();
+      loadItems();
+    });
 
     dateController.value.addListener(() {
       selectedFilter.value = DateFilterType.custom;
@@ -35,6 +43,14 @@ class MainScreenController extends GetxController {
     });
 
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    _itemsSubscription?.cancel();
+    _categorySubscription?.cancel();
+    dateController.value.dispose();
+    super.onClose();
   }
 
   loadCategories() async {
@@ -45,7 +61,8 @@ class MainScreenController extends GetxController {
 
   void loadItems() {
     final allItems = _itemsBox.values.toList();
-    DateTime now = DateTime.now();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
 
     List<ItemModel> filtered = [];
 
@@ -71,9 +88,7 @@ class MainScreenController extends GetxController {
       switch (selectedFilter.value) {
         case DateFilterType.today:
           filtered = allItems.where((item) {
-            return item.date.year == now.year &&
-                item.date.month == now.month &&
-                item.date.day == now.day;
+            return _isSameDay(item.date, today);
           }).toList();
           break;
 
@@ -96,14 +111,16 @@ class MainScreenController extends GetxController {
         case DateFilterType.custom:
           break;
         case DateFilterType.thisWeek:
-          // Get start of the week (Monday)
-          DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-          // Get end of the week (Sunday)
-          DateTime endOfWeek = startOfWeek.add(Duration(days: 6));
+          final startOfWeek = today.subtract(Duration(days: today.weekday - 1));
+          final endOfWeek = startOfWeek.add(const Duration(days: 7));
 
           filtered = allItems.where((item) {
-            DateTime date = item.date;
-            return !date.isBefore(startOfWeek) && !date.isAfter(endOfWeek);
+            final date = DateTime(
+              item.date.year,
+              item.date.month,
+              item.date.day,
+            );
+            return !date.isBefore(startOfWeek) && date.isBefore(endOfWeek);
           }).toList();
           break;
       }
@@ -130,10 +147,16 @@ class MainScreenController extends GetxController {
 
     for (var item in items) {
       String category = getCategoryNameById(item.category)?.name ?? 'Unknown';
-      dataMap[category] = (dataMap[category] ?? 0) + item.price * item.quantity;
+      dataMap[category] = (dataMap[category] ?? 0) + item.price;
     }
 
     return dataMap.entries.map((e) => PieChartModel(e.key, e.value)).toList();
+  }
+
+  bool _isSameDay(DateTime first, DateTime second) {
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
   }
 
   CategoryModel? getCategoryNameById(String id) {

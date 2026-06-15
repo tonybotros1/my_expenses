@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -16,9 +18,10 @@ class AddNewItemController extends GetxController {
   );
   TextEditingController noteController = TextEditingController();
   String? selectedCategory;
-  String? selectedCategoryValue;
+  final selectedCategoryValue = RxnString();
   late Box<CategoryModel> _box;
   late Box<ItemModel> _itemsBox;
+  StreamSubscription<BoxEvent>? _categorySubscription;
   var categories = <CategoryModel>[].obs;
   DateFormat formatter = DateFormat('dd-MM-yyyy');
   RxBool isinEditMode = RxBool(false);
@@ -36,30 +39,33 @@ class AddNewItemController extends GetxController {
     await Hive.openBox<ItemModel>('item_box');
     _itemsBox = Hive.box<ItemModel>('item_box');
 
-    _box.watch().listen((_) => loadCategories());
+    _categorySubscription = _box.watch().listen((_) => loadCategories());
     if (Get.arguments != null) {
       isinEditMode.value = true;
       ItemModel arguments = Get.arguments;
+      final quantity = arguments.quantity <= 0 ? 1 : arguments.quantity;
       itemid.value = arguments.id;
       itemNameController.text = arguments.name;
-      quantityController.text = arguments.quantity.toString();
-      priceController.text = arguments.price.toString();
+      quantityController.text = quantity.toString();
+      priceController.text = _formatPriceForInput(arguments.price / quantity);
       dateController.text = textToDate(arguments.date);
       selectedCategory = arguments.category;
-      selectedCategoryValue =
-          '${getCategoryByIdSync(arguments.category)?.name}';
+      selectedCategoryValue.value = getCategoryByIdSync(
+        arguments.category,
+      )?.name;
       noteController.text = arguments.note;
     }
   }
 
   @override
   void onClose() {
-    // if (Hive.isBoxOpen('category_box')) {
-    //   Hive.box<CategoryModel>('category_box').close();
-    // }
-    // if (Hive.isBoxOpen('item_box')) {
-    //   Hive.box<ItemModel>('item_box').close();
-    // }
+    _categorySubscription?.cancel();
+    itemNameController.dispose();
+    quantityController.dispose();
+    priceController.dispose();
+    categoryController.dispose();
+    dateController.dispose();
+    noteController.dispose();
     super.onClose();
   }
 
@@ -69,21 +75,32 @@ class AddNewItemController extends GetxController {
 
   // this function is to add new category
   void addCategoryByName(String name) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      showSnackBar(title: 'Error', message: 'Please enter a category name.');
+      return;
+    }
+
     final exists = categories.any(
-      (cat) => cat.name.toLowerCase() == name.toLowerCase(),
+      (cat) => cat.name.toLowerCase() == trimmedName.toLowerCase(),
     );
 
     if (exists) {
-      showSnackBar(title: 'Already Exists', message: 'Category "$name" Exists');
+      showSnackBar(
+        title: 'Already Exists',
+        message: 'Category "$trimmedName" Exists',
+      );
 
       return;
     }
     Get.back();
     final newCategory = CategoryModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
+      name: trimmedName,
     );
-    showSnackBar(title: 'Category Added', message: 'Category "$name"');
+    selectedCategory = newCategory.id;
+    selectedCategoryValue.value = newCategory.name;
+    showSnackBar(title: 'Category Added', message: 'Category "$trimmedName"');
 
     _box.put(newCategory.id, newCategory);
   }
@@ -91,11 +108,11 @@ class AddNewItemController extends GetxController {
   // this functios is to add new item
   void addNewItem() async {
     try {
-      // Validate required fields
       if (itemNameController.text.isEmpty ||
           dateController.text.isEmpty ||
           selectedCategory == null ||
-          quantityController.text.isEmpty) {
+          quantityController.text.isEmpty ||
+          priceController.text.isEmpty) {
         showSnackBar(
           title: 'Error',
           message: 'Please fill all required fields.',
@@ -103,7 +120,6 @@ class AddNewItemController extends GetxController {
         return;
       }
 
-      // Parse the date
       DateTime parsedDate;
       try {
         parsedDate = formatter.parse(dateController.text);
@@ -112,37 +128,44 @@ class AddNewItemController extends GetxController {
         return;
       }
 
-      // Create new item
+      final quantity = int.tryParse(quantityController.text.trim()) ?? 0;
+      final unitPrice = double.tryParse(priceController.text.trim()) ?? -1;
+
+      if (quantity <= 0 || unitPrice < 0) {
+        showSnackBar(
+          title: 'Error',
+          message: 'Quantity and price must be valid numbers.',
+        );
+        return;
+      }
+
       final newItem = ItemModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         name: itemNameController.text.trim(),
         category: selectedCategory!,
         date: parsedDate,
         note: noteController.text.trim(),
-        price:
-            (double.tryParse(priceController.text.trim()) ?? 0.0) *
-            (int.tryParse(quantityController.text) ?? 1),
-        quantity: int.tryParse(quantityController.text) ?? 1,
+        price: unitPrice * quantity,
+        quantity: quantity,
       );
 
-      // Add to Hive box
       await _itemsBox.put(newItem.id, newItem);
 
-      // Success feedback
+      clearForm();
+      Get.back();
       showSnackBar(title: 'Done', message: 'Item added successfully');
     } catch (e) {
-      // print('Add item error: $e');
       showSnackBar(title: 'Error', message: 'Failed to add item.');
     }
   }
 
   void editItem(String id) async {
     try {
-      // Validate required fields
       if (itemNameController.text.isEmpty ||
           dateController.text.isEmpty ||
           selectedCategory == null ||
-          quantityController.text.isEmpty) {
+          quantityController.text.isEmpty ||
+          priceController.text.isEmpty) {
         showSnackBar(
           title: 'Error',
           message: 'Please fill all required fields.',
@@ -150,7 +173,6 @@ class AddNewItemController extends GetxController {
         return;
       }
 
-      // Parse the date
       DateTime parsedDate;
       try {
         parsedDate = formatter.parse(dateController.text);
@@ -159,29 +181,38 @@ class AddNewItemController extends GetxController {
         return;
       }
 
-      // Get existing item (optional check)
+      final quantity = int.tryParse(quantityController.text.trim()) ?? 0;
+      final unitPrice = double.tryParse(priceController.text.trim()) ?? -1;
+
+      if (quantity <= 0 || unitPrice < 0) {
+        showSnackBar(
+          title: 'Error',
+          message: 'Quantity and price must be valid numbers.',
+        );
+        return;
+      }
+
       final existingItem = _itemsBox.get(id);
       if (existingItem == null) {
         showSnackBar(title: 'Error', message: 'Item not found.');
         return;
       }
 
-      // Create updated item
       final updatedItem = ItemModel(
-        id: id, // keep the same id
+        id: id,
         name: itemNameController.text.trim(),
         category: selectedCategory!,
         date: parsedDate,
         note: noteController.text.trim(),
-        price:
-            (double.tryParse(priceController.text.trim()) ?? 0.0) *
-            (int.tryParse(quantityController.text) ?? 1),
-        quantity: int.tryParse(quantityController.text) ?? 1,
+        price: unitPrice * quantity,
+        quantity: quantity,
       );
 
-      // Update the item in Hive box
       await _itemsBox.put(id, updatedItem);
 
+      clearForm();
+      isinEditMode.value = false;
+      Get.back();
       showSnackBar(title: 'Done', message: 'Item updated successfully');
     } catch (e) {
       showSnackBar(title: 'Error', message: 'Failed to update item.');
@@ -194,5 +225,22 @@ class AddNewItemController extends GetxController {
     } catch (e) {
       return null;
     }
+  }
+
+  void clearForm() {
+    itemNameController.clear();
+    quantityController.text = '1';
+    priceController.clear();
+    categoryController.clear();
+    dateController.text = textToDate(DateTime.now());
+    noteController.clear();
+    selectedCategory = null;
+    selectedCategoryValue.value = null;
+    itemid.value = '';
+  }
+
+  String _formatPriceForInput(double value) {
+    if (value % 1 == 0) return value.toStringAsFixed(0);
+    return value.toStringAsFixed(2);
   }
 }

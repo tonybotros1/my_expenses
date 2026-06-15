@@ -30,9 +30,9 @@ class ItemModel {
     String? name,
     double? price,
     String? category,
-    DateTime? date ,
-    String? note = '',
-    int? quantity = 1,
+    DateTime? date,
+    String? note,
+    int? quantity,
   }) {
     return ItemModel(
       id: id ?? this.id,
@@ -40,7 +40,7 @@ class ItemModel {
       price: price ?? this.price,
       category: category ?? this.category,
       date: date ?? this.date,
-      note: note ?? this.name,
+      note: note ?? this.note,
       quantity: quantity ?? this.quantity,
     );
   }
@@ -52,6 +52,6 @@ class ItemModel {
     required this.date,
     required this.note,
     required this.price,
-    required this.quantity
+    required this.quantity,
   });
 }

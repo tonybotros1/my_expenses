@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +11,7 @@ class MyCategoriesController extends GetxController {
   TextEditingController category = TextEditingController();
 
   late Box<CategoryModel> _box;
+  StreamSubscription<BoxEvent>? _categorySubscription;
   var categories = <CategoryModel>[].obs;
   RxBool isScreenLoading = RxBool(false);
 
@@ -21,14 +24,13 @@ class MyCategoriesController extends GetxController {
         : await Hive.openBox<CategoryModel>('category_box');
 
     loadCategories();
-    _box.watch().listen((_) => loadCategories());
+    _categorySubscription = _box.watch().listen((_) => loadCategories());
   }
 
   @override
   void onClose() {
-    // if (Hive.isBoxOpen('category_box')) {
-    //   Hive.box<CategoryModel>('items').close();
-    // }
+    _categorySubscription?.cancel();
+    category.dispose();
     super.onClose();
   }
 
@@ -41,29 +43,38 @@ class MyCategoriesController extends GetxController {
     isScreenLoading.value = false;
   }
 
-  void deleteCategoryById(String id) {
+  Future<bool> deleteCategoryById(String id) async {
     final category = _box.get(id);
     if (category == null) {
       showSnackBar(title: 'Error', message: 'Category not found!');
 
-      return;
+      return false;
     }
 
-    _box.delete(id).whenComplete(() {
-      showSnackBar(
-        title: 'Deleted',
-        message: 'Category "${category.name}" has been deleted',
-      );
-    });
+    await _box.delete(id);
+    showSnackBar(
+      title: 'Deleted',
+      message: 'Category "${category.name}" has been deleted',
+    );
+    return true;
   }
 
   void addCategoryByName(String name) {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) {
+      showSnackBar(title: 'Error', message: 'Please enter a category name.');
+      return;
+    }
+
     final exists = categories.any(
-      (cat) => cat.name.toLowerCase() == name.toLowerCase(),
+      (cat) => cat.name.toLowerCase() == trimmedName.toLowerCase(),
     );
 
     if (exists) {
-      showSnackBar(title: 'Already Exists', message: 'Category "$name" Exists');
+      showSnackBar(
+        title: 'Already Exists',
+        message: 'Category "$trimmedName" Exists',
+      );
 
       return;
     }
@@ -71,25 +82,30 @@ class MyCategoriesController extends GetxController {
 
     final newCategory = CategoryModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
+      name: trimmedName,
     );
-    showSnackBar(title: 'Category Added', message: 'Category "$name"');
+    showSnackBar(title: 'Category Added', message: 'Category "$trimmedName"');
 
     _box.put(newCategory.id, newCategory);
   }
 
   void editCategoryName(String id, String newName) {
-    // تأكد إنو الاسم الجديد ما بيتكرر
+    final trimmedName = newName.trim();
+    if (trimmedName.isEmpty) {
+      showSnackBar(title: 'Error', message: 'Please enter a category name.');
+      return;
+    }
+
     final exists = categories.any(
       (cat) =>
-          cat.name.toLowerCase() == newName.toLowerCase() &&
-          cat.id != id, // تجاهل العنصر الجاري تعديله
+          cat.name.toLowerCase() == trimmedName.toLowerCase() && cat.id != id,
     );
 
     if (exists) {
       showSnackBar(
         title: 'Already Exists',
-        message: 'Another category with the name "$newName" already exists.',
+        message:
+            'Another category with the name "$trimmedName" already exists.',
       );
       return;
     }
@@ -97,12 +113,12 @@ class MyCategoriesController extends GetxController {
 
     final category = _box.get(id);
     if (category != null) {
-      final updatedCategory = category.copyWith(name: newName);
+      final updatedCategory = category.copyWith(name: trimmedName);
       _box.put(id, updatedCategory);
 
       showSnackBar(
         title: 'Category Updated',
-        message: 'The category has been renamed to "$newName".',
+        message: 'The category has been renamed to "$trimmedName".',
       );
     } else {
       showSnackBar(title: 'Error', message: 'Category not found.');

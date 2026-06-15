@@ -1,4 +1,3 @@
-
 import 'package:flutter/services.dart';
 
 class DateTextFormatter extends TextInputFormatter {
@@ -6,7 +5,9 @@ class DateTextFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     // Allow only digits, slashes, and hyphens
     if (_regExp.hasMatch(newValue.text)) {
       return newValue;

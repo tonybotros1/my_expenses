@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-Color mainColor = Color(0xff3D1E4F);
-Color secColor = Color(0xff6C4A80);
-Color thirdColor = Color(0xff9B7DB0);
-Color forthColor = Color(0xffD2C2E0);
+const Color mainColor = Color(0xff3D1E4F);
+const Color secColor = Color(0xff6C4A80);
+const Color thirdColor = Color(0xff9B7DB0);
+const Color forthColor = Color(0xffD2C2E0);
 // final colors = [
 //   Color(0xFFE1F5FE),
 //   Color(0xFFF3E5F5),
@@ -61,7 +60,7 @@ Color forthColor = Color(0xffD2C2E0);
 //   Color(0xFFFFF3E0),
 // ];
 
-final colors = [
+const colors = [
   Color(0xFFD7CCC8),
   Color(0xFFFFE0B2),
   Color(0xFFDCEDC8),
@@ -71,6 +70,69 @@ final colors = [
   Color(0xFFC8E6C9),
   Color(0xFFB2DFDB),
 ];
+
+ThemeData buildAppTheme(Brightness brightness) {
+  final isDark = brightness == Brightness.dark;
+  final scheme = ColorScheme.fromSeed(
+    seedColor: mainColor,
+    brightness: brightness,
+  );
+  final scaffoldColor = isDark ? const Color(0xff121018) : Colors.white;
+  final surfaceColor = isDark ? const Color(0xff1b1724) : Colors.white;
+  final fieldColor = isDark ? const Color(0xff282131) : Colors.grey.shade100;
+
+  return ThemeData(
+    useMaterial3: true,
+    brightness: brightness,
+    colorScheme: scheme.copyWith(
+      primary: mainColor,
+      secondary: secColor,
+      surface: surfaceColor,
+    ),
+    scaffoldBackgroundColor: scaffoldColor,
+    appBarTheme: AppBarTheme(
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: scaffoldColor,
+      foregroundColor: isDark ? Colors.white : Colors.black87,
+      surfaceTintColor: Colors.transparent,
+    ),
+    drawerTheme: DrawerThemeData(backgroundColor: surfaceColor),
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: mainColor,
+      foregroundColor: Colors.white,
+    ),
+    cardTheme: CardThemeData(color: surfaceColor),
+    dividerTheme: DividerThemeData(
+      color: isDark ? Colors.white12 : Colors.black12,
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: fieldColor,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: isDark ? Colors.white24 : Colors.grey.shade400,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(5),
+        borderSide: BorderSide(
+          color: isDark ? forthColor : mainColor,
+          width: 2,
+        ),
+      ),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: isDark ? Colors.grey.shade900 : Colors.black87,
+      contentTextStyle: const TextStyle(color: Colors.white),
+    ),
+  );
+}
 
 final Map<String, IconData> allCategoriesIcons = {
   "Food": Icons.fastfood,
@@ -102,6 +164,34 @@ final Map<String, IconData> allCategoriesIcons = {
   "Other": Icons.more_horiz,
   "Hookah": Icons.smoking_rooms,
 };
+
+const List<Color> categoryStyleColors = [
+  Color(0xFFD7CCC8),
+  Color(0xFFFFE0B2),
+  Color(0xFFDCEDC8),
+  Color(0xFFFFCDD2),
+  Color(0xFFB3E5FC),
+  Color(0xFFD1C4E9),
+  Color(0xFFC8E6C9),
+  Color(0xFFB2DFDB),
+  Color(0xFFFFF59D),
+  Color(0xFFA5D6A7),
+  Color(0xFF90CAF9),
+  Color(0xFFCE93D8),
+];
+
+IconData getIconByLabel(String label) {
+  return allCategoriesIcons[label] ?? Icons.more_horiz;
+}
+
+String iconLabelForName(String categoryName) {
+  final normalized = categoryName.trim().toLowerCase();
+  final match = allCategoriesIcons.keys.firstWhere(
+    (label) => label.toLowerCase() == normalized,
+    orElse: () => 'Other',
+  );
+  return match;
+}
 
 IconData getCategoryIcon(String? categoryName) {
   if (categoryName == null) return Icons.more_horiz;
@@ -135,24 +225,24 @@ Color getTextColor(Color bgColor, {double amount = 0.4}) {
   return darkerHsl.toColor();
 }
 
-var textFontForAppBar = GoogleFonts.raleway(
+TextStyle textFontForAppBar = TextStyle(
   fontSize: 25.sp,
   fontWeight: FontWeight.bold,
 );
-double textFieldHeight = 45.w;
-TextStyle textFieldFontStyle = TextStyle(fontSize: 14.sp, color: Colors.black);
+double textFieldHeight = 45.h;
+TextStyle textFieldFontStyle = TextStyle(fontSize: 14.sp);
 TextStyle textFieldLabelStyle = TextStyle(
   color: Colors.grey.shade700,
   fontSize: 12.sp,
   fontWeight: FontWeight.bold,
 );
 
-var regTextStyle = TextStyle(fontSize: 15.sp);
+TextStyle regTextStyle = TextStyle(fontSize: 15.sp);
 
-var textStyleForCards = TextStyle(
+TextStyle textStyleForCards = TextStyle(
   fontSize: 22.sp,
   fontWeight: FontWeight.bold,
-  color: Color(0xffE9F5BE),
+  color: const Color(0xffE9F5BE),
 );
 Widget customText({
   required String text,
@@ -179,7 +269,7 @@ Widget customText({
         ? SelectableText(
             formattedText,
             maxLines: maxLines,
-            style: GoogleFonts.raleway(
+            style: TextStyle(
               fontSize: fontSize?.sp,
               color: color,
               fontWeight: isBold ? FontWeight.bold : null,
@@ -189,7 +279,7 @@ Widget customText({
             formattedText,
             maxLines: maxLines,
             // overflow: TextOverflow.fade,
-            style: GoogleFonts.raleway(
+            style: TextStyle(
               fontSize: fontSize?.sp,
               color: color,
               fontWeight: isBold ? FontWeight.bold : null,
@@ -198,25 +288,43 @@ Widget customText({
   );
 }
 
-SnackbarController showSnackBar({
-  required String title,
-  required String message,
-}) {
-  return Get.snackbar(
-    title,
-    message,
-    snackPosition: SnackPosition.TOP,
-    snackStyle: SnackStyle.FLOATING,
-    margin: EdgeInsets.only(left: 20.w, bottom: 20.h),
-    borderRadius: 10.r,
-    backgroundColor: Colors.black87,
-    colorText: Colors.white,
-    duration: const Duration(seconds: 2),
-    maxWidth: 300.w,
-    isDismissible: true,
-    forwardAnimationCurve: Curves.easeOutBack,
-    animationDuration: const Duration(milliseconds: 500),
-  );
+void showSnackBar({required String title, required String message}) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final context = Get.context ?? Get.overlayContext;
+    if (context == null) return;
+
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    if (messenger == null) return;
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+          margin: EdgeInsets.fromLTRB(20.w, 0, 20.w, 20.h),
+          backgroundColor: Colors.black87,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(message, style: const TextStyle(color: Colors.white)),
+            ],
+          ),
+        ),
+      );
+  });
 }
 
 String textToDate(dynamic inputDate) {

@@ -17,6 +17,8 @@ class DateFilterDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     const Map<DateFilterType, String> dateFilterLabels = {
       DateFilterType.all: 'All',
       DateFilterType.today: 'Today',
@@ -30,18 +32,25 @@ class DateFilterDropdown extends StatelessWidget {
       height: textFieldHeight,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).inputDecorationTheme.fillColor,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<DateFilterType>(
           value: selectedFilter,
+          isExpanded: true,
 
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
           ),
           onChanged: onChanged,
           items: DateFilterType.values.map((filter) {

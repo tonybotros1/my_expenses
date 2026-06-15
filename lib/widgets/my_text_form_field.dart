@@ -7,30 +7,31 @@ import 'date_time_field.dart';
 import 'decimal_text_field.dart';
 import 'first_letter_from_each_word_capital.dart';
 
-Widget myTextFormFieldWithBorder(
-    {String? labelText,
-    String? hintText,
-    TextEditingController? controller,
-    bool? validate,
-    bool obscureText = false,
-    IconButton? suffixIcon,
-    Icon? icon,
-    bool? isnumber,
-    bool? isDouble,
-    bool? isDate,
-    bool? isCapitaLetters,
-    FocusNode? focusNode,
-    TextInputAction? textInputAction,
-    void Function()? onEditingComplete,
-    maxLines = 1,
-    // double? borderRadius = 4,
-    TextAlign? textAlign = TextAlign.start,
-    String? initialValue,
-    int? minLines,
-    TextInputType? keyboardType,
-    void Function(String)? onChanged,
-    void Function(String)? onFieldSubmitted,
-    bool? isEnabled = true}) {
+Widget myTextFormFieldWithBorder({
+  String? labelText,
+  String? hintText,
+  TextEditingController? controller,
+  bool? validate,
+  bool obscureText = false,
+  IconButton? suffixIcon,
+  Icon? icon,
+  bool? isnumber,
+  bool? isDouble,
+  bool? isDate,
+  bool? isCapitaLetters,
+  FocusNode? focusNode,
+  TextInputAction? textInputAction,
+  void Function()? onEditingComplete,
+  maxLines = 1,
+  // double? borderRadius = 4,
+  TextAlign? textAlign = TextAlign.start,
+  String? initialValue,
+  int? minLines,
+  TextInputType? keyboardType,
+  void Function(String)? onChanged,
+  void Function(String)? onFieldSubmitted,
+  bool? isEnabled = true,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -38,9 +39,10 @@ Widget myTextFormFieldWithBorder(
           ? Padding(
               padding: const EdgeInsets.only(left: 2),
               child: Text(
-                  overflow: TextOverflow.ellipsis,
-                  labelText,
-                  style: textFieldLabelStyle),
+                overflow: TextOverflow.ellipsis,
+                labelText,
+                style: textFieldLabelStyle,
+              ),
             )
           : SizedBox(),
       SizedBox(
@@ -67,12 +69,12 @@ Widget myTextFormFieldWithBorder(
           inputFormatters: isnumber == true
               ? [FilteringTextInputFormatter.digitsOnly]
               : isDouble == true
-                  ? [DecimalTextInputFormatter()]
-                  : isDate == true
-                      ? [DateTextFormatter()]
-                      : isCapitaLetters == true
-                          ? [CapitalLettersOnlyFormatter()]
-                          : [WordCapitalizationInputFormatter()],
+              ? [DecimalTextInputFormatter()]
+              : isDate == true
+              ? [DateTextFormatter()]
+              : isCapitaLetters == true
+              ? [CapitalLettersOnlyFormatter()]
+              : [WordCapitalizationInputFormatter()],
           enabled: isEnabled,
           obscureText: obscureText,
           keyboardType: keyboardType,
@@ -86,8 +88,8 @@ Widget myTextFormFieldWithBorder(
             hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
             // labelText: labelText,
             alignLabelWithHint: true,
-            // hintText: hintText,
 
+            // hintText: hintText,
             labelStyle: TextStyle(
               color: isEnabled == false
                   ? Colors.grey.shade500

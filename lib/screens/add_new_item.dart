@@ -20,10 +20,13 @@ class AddNewItem extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text('New Item', style: textFontForAppBar),
-        leading: IconButton(onPressed: (){
-          Get.back();
-          _addNewItemController.isinEditMode.value = false;
-        }, icon: Icon(Icons.arrow_back_ios)),
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+            _addNewItemController.isinEditMode.value = false;
+          },
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -33,7 +36,7 @@ class AddNewItem extends StatelessWidget {
                       _addNewItemController.itemid.value,
                     );
             },
-            icon: Icon(Icons.done),
+            icon: const Icon(Icons.done),
           ),
         ],
       ),
@@ -55,7 +58,8 @@ class AddNewItem extends StatelessWidget {
                     Expanded(
                       child: customDropdown(
                         label: "Category",
-                        value: _addNewItemController.selectedCategoryValue,
+                        value:
+                            _addNewItemController.selectedCategoryValue.value,
                         items: _addNewItemController.categories.isEmpty
                             ? []
                             : _addNewItemController.categories
@@ -69,6 +73,8 @@ class AddNewItem extends StatelessWidget {
                               );
 
                           _addNewItemController.selectedCategory = selected.id;
+                          _addNewItemController.selectedCategoryValue.value =
+                              val;
                         },
                       ),
                     ),
@@ -115,7 +121,7 @@ class AddNewItem extends StatelessWidget {
                         _addNewItemController.dateController,
                       );
                     },
-                    icon: Icon(Icons.date_range_outlined),
+                    icon: const Icon(Icons.date_range_outlined),
                   ),
                   isDate: true,
                   label: "Date",
@@ -143,11 +149,10 @@ Future<dynamic> addOrEditCategory({
 }) {
   return Get.dialog(
     Dialog(
-      child: Container(
+      child: Padding(
         padding: EdgeInsets.all(16.r),
-        height: 180.h,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             customLabeledTextField(
@@ -155,6 +160,7 @@ Future<dynamic> addOrEditCategory({
               controller: controller,
               keyboardType: TextInputType.text,
             ),
+            SizedBox(height: 18.h),
             ElevatedButton(
               onPressed: onPressed,
               child: Text(isEdit ? 'Save' : 'Add'),

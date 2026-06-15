@@ -18,17 +18,18 @@ class CustomFilterField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       height: textFieldHeight,
 
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: Theme.of(context).inputDecorationTheme.fillColor,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: TextFormField(
-        
         readOnly: true,
         controller: controller,
         onChanged: onChanged,
@@ -43,7 +44,7 @@ class CustomFilterField extends StatelessWidget {
         style: TextStyle(
           fontSize: 15.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.grey.shade700,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
     );

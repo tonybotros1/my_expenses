@@ -11,6 +11,20 @@ class ExpensePieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double total = data.fold(0, (sum, item) => sum + item.totalAmount);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (data.isEmpty || total == 0) {
+      return Center(
+        child: Text(
+          'No expenses for this period',
+          style: TextStyle(
+            color: colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      );
+    }
+
     return SfCircularChart(
       // backgroundColor: Colors.red,
       margin: EdgeInsets.all(0),
@@ -35,7 +49,10 @@ class ExpensePieChart extends StatelessWidget {
       title: ChartTitle(text: ''), // إزالة العنوان إذا ما بدك ياه
 
       legend: Legend(
-        textStyle: TextStyle(fontWeight: FontWeight.bold),
+        textStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onSurface,
+        ),
         isVisible: true,
         overflowMode: LegendItemOverflowMode.wrap,
         position: LegendPosition.left,

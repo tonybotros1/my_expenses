@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../consts.dart';
 import 'capital_letters_field.dart';
@@ -22,6 +23,12 @@ Widget customLabeledTextField({
   Icon? icon,
   bool? isEnabled = true,
 }) {
+  final context = Get.context;
+  final theme = context != null ? Theme.of(context) : ThemeData.light();
+  final colorScheme = theme.colorScheme;
+  final fillColor =
+      theme.inputDecorationTheme.fillColor ?? Colors.grey.shade200;
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -30,7 +37,7 @@ Widget customLabeledTextField({
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 15.sp,
-          color: Colors.grey.shade700,
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
       SizedBox(height: 6.h),
@@ -38,7 +45,7 @@ Widget customLabeledTextField({
         height: maxLines == 1 ? textFieldHeight : null,
         child: TextFormField(
           textCapitalization: TextCapitalization.words,
-          style: TextStyle(fontSize: 15.w, color: Colors.black),
+          style: TextStyle(fontSize: 15.sp, color: colorScheme.onSurface),
           inputFormatters: isnumber == true
               ? [FilteringTextInputFormatter.digitsOnly]
               : isDouble == true
@@ -59,19 +66,25 @@ Widget customLabeledTextField({
             alignLabelWithHint: true,
             labelStyle: TextStyle(
               color: isEnabled == false
-                  ? Colors.grey.shade500
-                  : Colors.grey.shade700,
+                  ? colorScheme.onSurfaceVariant.withValues(alpha: 0.6)
+                  : colorScheme.onSurfaceVariant,
             ),
             filled: isEnabled == true,
-            fillColor: Colors.grey.shade200,
+            fillColor: fillColor,
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey, width: 2.0.w),
+              borderSide: BorderSide(color: colorScheme.primary, width: 2.0.w),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey, width: 1.0.w),
+              borderSide: BorderSide(
+                color: colorScheme.outlineVariant,
+                width: 1.0.w,
+              ),
             ),
             disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0.w),
+              borderSide: BorderSide(
+                color: colorScheme.outlineVariant,
+                width: 1.0.w,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.red, width: 1.0.w),
